@@ -4,14 +4,16 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserDataService } from '../../services/user-data.service';
 
-interface Game {
+// Tipagem correta para os teus jogos guardados
+interface SavedGame {
   game_id: number;
   game_name: string;
   game_image: string;
   game_rating: number;
 }
 
-interface Review {
+// Tipagem correta para as reviews
+interface UserReview {
   game_id: number;
   game_name: string;
   rating: number;
@@ -30,65 +32,58 @@ export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private userDataService = inject(UserDataService);
 
-  username = this.authService.getUsername();
-  activeTab: 'favorites' | 'wishlist' | 'reviews' = 'favorites';
-
-  favorites: Game[] = [];
-  wishlist: Game[] = [];
-  reviews: Review[] = [];
+  username: string | null = null;
+  favorites: SavedGame[] = [];
+  wishlist: SavedGame[] = [];
+  reviews: UserReview[] = [];
+  isLoading = true;
 
   ngOnInit(): void {
-    this.loadFavorites();
-    this.loadWishlist();
-    this.loadReviews();
+    this.authService.username$.subscribe(user => {
+      this.username = user;
+    });
+
+    this.loadProfileData();
   }
 
-  loadFavorites(): void {
+  loadProfileData(): void {
+    this.isLoading = true;
+
     this.userDataService.getFavorites().subscribe({
-      next: (data) => { this.favorites = data; }
+      next: (favs) => {
+        this.favorites = favs as SavedGame[];
+        this.checkLoadingComplete();
+      },
+      error: () => this.checkLoadingComplete()
     });
-  }
 
-  loadWishlist(): void {
     this.userDataService.getWishlist().subscribe({
-      next: (data) => { this.wishlist = data; }
+      next: (wish) => {
+        this.wishlist = wish as SavedGame[];
+        this.checkLoadingComplete();
+      },
+      error: () => this.checkLoadingComplete()
     });
+
+    // Verificação defensiva tipada de forma segura para evitar o uso de 'any'
+    const dynamicService = this.userDataService as unknown as { 
+      getReviews?: () => { subscribe: (callbacks: { next: (revs: UserReview[]) => void }) => void } 
+    };
+
+    if (typeof dynamicService.getReviews === 'function') {
+      dynamicService.getReviews().subscribe({
+        next: (revs) => {
+          this.reviews = revs;
+        }
+      });
+    }
   }
 
-  loadReviews(): void {
-    this.userDataService.getReviews().subscribe({
-      next: (data) => { this.reviews = data; }
-    });
+  private checkLoadingComplete(): void {
+    this.isLoading = false;
   }
 
-  removeFavorite(gameId: number): void {
-    this.userDataService.removeFavorite(gameId).subscribe({
-      next: () => { this.favorites = this.favorites.filter(f => f.game_id !== gameId); }
-    });
-  }
-
-  removeFromWishlist(gameId: number): void {
-    this.userDataService.removeFromWishlist(gameId).subscribe({
-      next: () => { this.wishlist = this.wishlist.filter(w => w.game_id !== gameId); }
-    });
-  }
-
-  removeReview(gameId: number): void {
-    this.userDataService.removeReview(gameId).subscribe({
-      next: () => { this.reviews = this.reviews.filter(r => r.game_id !== gameId); }
-    });
-  }
-
-  goToGame(gameId: number): void {
-    this.router.navigate(['/games', gameId]);
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
-
-  goToGames(): void {
-    this.router.navigate(['/games']);
+  goToGame(id: number): void {
+    this.router.navigate(['/games', id]);
   }
 }

@@ -1,113 +1,65 @@
 <div class="profile-container">
-  <div class="profile-header">
-    <button class="btn-back" (click)="goToGames()">← Voltar</button>
-    <div class="user-info">
-      <div class="avatar">{{ username?.charAt(0)?.toUpperCase() }}</div>
-      <h1>{{ username }}</h1>
-    </div>
-    <button class="btn-logout" (click)="logout()">Sair</button>
-  </div>
-
-  <div class="tabs">
-    <button
-      class="tab"
-      [class.active]="activeTab === 'favorites'"
-      (click)="activeTab = 'favorites'">
-      ❤️ Favoritos ({{ favorites.length }})
-    </button>
-    <button
-      class="tab"
-      [class.active]="activeTab === 'wishlist'"
-      (click)="activeTab = 'wishlist'">
-      ➕ Wishlist ({{ wishlist.length }})
-    </button>
-    <button
-      class="tab"
-      [class.active]="activeTab === 'reviews'"
-      (click)="activeTab = 'reviews'">
-      ✏️ Reviews ({{ reviews.length }})
-    </button>
-  </div>
-
-  @if (activeTab === 'favorites') {
-    <div class="grid">
-      @if (favorites.length === 0) {
-        <p class="empty">Ainda não tens favoritos.</p>
-      }
-      @for (game of favorites; track game.game_id) {
-        <div class="card">
-          <img
-            [src]="game.game_image"
-            [alt]="game.game_name"
-            (click)="goToGame(game.game_id)"
-            (keyup.enter)="goToGame(game.game_id)"
-            tabindex="0"
-            role="button"
-          />
-          <div class="card-info">
-            <h3
-              (click)="goToGame(game.game_id)"
-              (keyup.enter)="goToGame(game.game_id)"
-              tabindex="0"
-              role="button">{{ game.game_name }}</h3>
-            <p>⭐ {{ game.game_rating }}</p>
-            <button class="btn-remove" (click)="removeFavorite(game.game_id)">Remover</button>
-          </div>
-        </div>
-      }
-    </div>
+  @if (isLoading) {
+    <div class="loading">A carregar estatísticas do perfil...</div>
   }
 
-  @if (activeTab === 'wishlist') {
-    <div class="grid">
-      @if (wishlist.length === 0) {
-        <p class="empty">A tua wishlist está vazia.</p>
-      }
-      @for (game of wishlist; track game.game_id) {
-        <div class="card">
-          <img
-            [src]="game.game_image"
-            [alt]="game.game_name"
-            (click)="goToGame(game.game_id)"
-            (keyup.enter)="goToGame(game.game_id)"
-            tabindex="0"
-            role="button"
-          />
-          <div class="card-info">
-            <h3
-              (click)="goToGame(game.game_id)"
-              (keyup.enter)="goToGame(game.game_id)"
-              tabindex="0"
-              role="button">{{ game.game_name }}</h3>
-            <p>⭐ {{ game.game_rating }}</p>
-            <button class="btn-remove" (click)="removeFromWishlist(game.game_id)">Remover</button>
-          </div>
-        </div>
-      }
+  @if (!isLoading) {
+    <div class="profile-header">
+      <div class="avatar">👤</div>
+      <h1>Olá, {{ username }}!</h1>
+      <p>Bem-vindo à tua área pessoal do GameTracker.</p>
     </div>
-  }
 
-  @if (activeTab === 'reviews') {
-    <div class="reviews-list">
-      @if (reviews.length === 0) {
-        <p class="empty">Ainda não fizeste nenhuma review.</p>
-      }
-      @for (review of reviews; track review.game_id) {
-        <div class="review-card">
-          <div class="review-header">
-            <h3
-              (click)="goToGame(review.game_id)"
-              (keyup.enter)="goToGame(review.game_id)"
-              tabindex="0"
-              role="button">{{ review.game_name }}</h3>
-            <span class="stars">{{ '★'.repeat(review.rating) }}{{ '☆'.repeat(5 - review.rating) }}</span>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="icon">❤️</span>
+        <div class="stat-value">{{ favorites.length }}</div>
+        <div class="stat-label">Favoritos</div>
+      </div>
+      <div class="stat-card">
+        <span class="icon">➕</span>
+        <div class="stat-value">{{ wishlist.length }}</div>
+        <div class="stat-label">Na Wishlist</div>
+      </div>
+      <div class="stat-card">
+        <span class="icon">✏️</span>
+        <div class="stat-value">{{ reviews.length }}</div>
+        <div class="stat-label">Reviews Escritas</div>
+      </div>
+    </div>
+
+    <div class="profile-content">
+      <div class="section-block">
+        <h2>❤️ Os Meus Favoritos</h2>
+        @if (favorites.length === 0) {
+          <p class="empty-msg">Ainda não adicionaste nenhum jogo aos teus favoritos.</p>
+        } @else {
+          <div class="mini-game-grid">
+            @for (game of favorites; track game.game_id) {
+              <div class="mini-card" (click)="goToGame(game.game_id)" (keyup.enter)="goToGame(game.game_id)" tabindex="0" role="button">
+                <img [src]="game.game_image" [alt]="game.game_name" />
+                <p>{{ game.game_name }}</p>
+              </div>
+            }
           </div>
-          @if (review.comment) {
-            <p class="review-comment">{{ review.comment }}</p>
-          }
-          <button class="btn-remove" (click)="removeReview(review.game_id)">Remover</button>
-        </div>
-      }
+        }
+      </div>
+
+      <div class="section-block">
+        <h2>✅ Minha Wishlist</h2>
+        @if (wishlist.length === 0) {
+          <p class="empty-msg">A tua lista de desejos está vazia de momento.</p>
+        } @else {
+          <div class="mini-game-grid">
+            @for (game of wishlist; track game.game_id) {
+              <div class="mini-card" (click)="goToGame(game.game_id)" (keyup.enter)="goToGame(game.game_id)" tabindex="0" role="button">
+                <img [src]="game.game_image" [alt]="game.game_name" />
+                <p>{{ game.game_name }}</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
     </div>
   }
 </div>
