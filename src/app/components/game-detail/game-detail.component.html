@@ -1,1 +1,36 @@
-<p>game-detail works!</p>
+<div class="container">
+  @if (isLoading) {
+    <div class="loading">A carregar jogo...</div>
+  }
+
+  @if (!isLoading && game) {
+    <button class="back-btn" (click)="goBack()">← Voltar</button>
+
+    <div class="game-header">
+      <img [src]="game.background_image" [alt]="game.name" />
+      <div class="game-info">
+        <h1>{{ game.name }}</h1>
+        <p>⭐ {{ game.rating }}</p>
+        <p>📅 {{ game.released }}</p>
+
+        <div class="tags">
+          @for (genre of game.genres; track genre.name) {
+            <span class="tag">{{ genre.name }}</span>
+          }
+        </div>
+
+        <div class="platforms">
+          <h3>Plataformas:</h3>
+          @for (p of game.platforms; track p.platform.name) {
+            <span class="tag">{{ p.platform.name }}</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="description">
+      <h2>Descrição</h2>
+      <p>{{ game.description_raw }}</p>
+    </div>
+  }
+</div>
