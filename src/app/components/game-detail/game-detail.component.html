@@ -1,36 +1,77 @@
-<div class="container">
+<div class="detail-container">
   @if (isLoading) {
-    <div class="loading">A carregar jogo...</div>
+    <div class="loading">A carregar...</div>
   }
 
-  @if (!isLoading && game) {
-    <button class="back-btn" (click)="goBack()">← Voltar</button>
+  @if (game) {
+    <button class="btn-back" (click)="goBack()">← Voltar</button>
 
     <div class="game-header">
-      <img [src]="game.background_image" [alt]="game.name" />
+      <img [src]="game.background_image" [alt]="game.name" class="game-cover" />
       <div class="game-info">
         <h1>{{ game.name }}</h1>
-        <p>⭐ {{ game.rating }}</p>
-        <p>📅 {{ game.released }}</p>
+        <p class="rating">⭐ {{ game.rating }}/5</p>
+        <p class="released">📅 {{ game.released }}</p>
 
-        <div class="tags">
+        <div class="genres">
           @for (genre of game.genres; track genre.name) {
             <span class="tag">{{ genre.name }}</span>
           }
         </div>
 
-        <div class="platforms">
-          <h3>Plataformas:</h3>
-          @for (p of game.platforms; track p.platform.name) {
-            <span class="tag">{{ p.platform.name }}</span>
-          }
+        <div class="action-buttons">
+          <button class="btn-action" [class.active]="isFavorite" (click)="toggleFavorite()">
+            {{ isFavorite ? '❤️ Favorito' : '🤍 Adicionar aos Favoritos' }}
+          </button>
+          <button class="btn-action" [class.active]="isInWishlist" (click)="toggleWishlist()">
+            {{ isInWishlist ? '✅ Na Wishlist' : '➕ Adicionar à Wishlist' }}
+          </button>
+          <button class="btn-action" (click)="showReviewForm = !showReviewForm">
+            ✏️ Escrever Review
+          </button>
         </div>
+
+        @if (successMessage) {
+          <div class="success">{{ successMessage }}</div>
+        }
+
+        @if (showReviewForm) {
+          <div class="review-form">
+            <h3>A tua review</h3>
+            <div class="stars">
+              @for (star of [1,2,3,4,5]; track star) {
+                <span
+                  class="star"
+                  [class.selected]="star <= reviewRating"
+                  (click)="reviewRating = star"
+                  (keyup.enter)="reviewRating = star"
+                  tabindex="0"
+                  role="button">★</span>
+              }
+            </div>
+            <textarea
+              [(ngModel)]="reviewComment"
+              placeholder="Escreve o teu comentário..."
+              rows="3"
+            ></textarea>
+            <button class="btn-primary" (click)="submitReview()">Guardar Review</button>
+          </div>
+        }
       </div>
     </div>
 
     <div class="description">
       <h2>Descrição</h2>
       <p>{{ game.description_raw }}</p>
+    </div>
+
+    <div class="platforms">
+      <h2>Plataformas</h2>
+      <div class="tags">
+        @for (p of game.platforms; track p.platform.name) {
+          <span class="tag">{{ p.platform.name }}</span>
+        }
+      </div>
     </div>
   }
 </div>
