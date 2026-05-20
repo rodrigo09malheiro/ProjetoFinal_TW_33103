@@ -1,1 +1,13 @@
+@if (isLoggedIn) {
+  <nav class="navbar">
+    <div class="nav-brand" (click)="goTo('games')" (keyup.enter)="goTo('games')" tabindex="0" role="button">
+      🎮 GameTracker
+    </div>
+    <div class="nav-links">
+      <button (click)="goTo('games')">Jogos</button>
+      <button (click)="goTo('profile')">👤 {{ username }}</button>
+    </div>
+  </nav>
+}
+
 <router-outlet />
