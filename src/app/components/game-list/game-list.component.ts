@@ -31,7 +31,10 @@ export class GameListComponent implements OnInit {
   games: Game[] = [];
   searchQuery = '';
   currentPage = 1;
+  totalPages = 1;
+  jumpToPage = 1;
   isLoading = false;
+  pageSize = 20;
 
   genres: FilterOption[] = [];
   platforms: FilterOption[] = [];
@@ -48,8 +51,10 @@ export class GameListComponent implements OnInit {
     this.isLoading = true;
     this.rawgService.getGames(this.currentPage, this.searchQuery, this.selectedGenre, this.selectedPlatform).subscribe({
       next: (data: unknown) => {
-        const response = data as { results: Game[] };
+        const response = data as { results: Game[], count: number };
         this.games = response.results;
+        this.totalPages = Math.ceil(response.count / this.pageSize);
+        this.jumpToPage = this.currentPage;
         this.isLoading = false;
       },
       error: () => { this.isLoading = false; }
@@ -97,14 +102,26 @@ export class GameListComponent implements OnInit {
   }
 
   nextPage(): void {
-    this.currentPage++;
-    this.loadGames();
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadGames();
+    }
   }
 
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
       this.loadGames();
+    }
+  }
+
+  onJumpToPage(): void {
+    const page = Number(this.jumpToPage);
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadGames();
+    } else {
+      this.jumpToPage = this.currentPage;
     }
   }
 }

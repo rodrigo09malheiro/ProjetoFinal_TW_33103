@@ -58,7 +58,21 @@
 
   <div class="pagination">
     <button (click)="prevPage()" [disabled]="currentPage === 1">← Anterior</button>
-    <span>Página {{ currentPage }}</span>
-    <button (click)="nextPage()">Próxima →</button>
+
+    <div class="page-info">
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <div class="jump">
+        <input
+          type="number"
+          [(ngModel)]="jumpToPage"
+          [min]="1"
+          [max]="totalPages"
+          (keyup.enter)="onJumpToPage()"
+        />
+        <button (click)="onJumpToPage()">Ir</button>
+      </div>
+    </div>
+
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Próxima →</button>
   </div>
 </div>
