@@ -11,6 +11,26 @@
     <button (click)="onSearch()">Pesquisar</button>
   </div>
 
+  <div class="filters">
+    <select [(ngModel)]="selectedGenre" (change)="onFilterChange()">
+      <option value="">🎭 Todos os géneros</option>
+      @for (genre of genres; track genre.id) {
+        <option [value]="genre.id">{{ genre.name }}</option>
+      }
+    </select>
+
+    <select [(ngModel)]="selectedPlatform" (change)="onFilterChange()">
+      <option value="">🖥️ Todas as plataformas</option>
+      @for (platform of platforms; track platform.id) {
+        <option [value]="platform.id">{{ platform.name }}</option>
+      }
+    </select>
+
+    @if (selectedGenre || selectedPlatform || searchQuery) {
+      <button class="btn-clear" (click)="clearFilters()">✕ Limpar filtros</button>
+    }
+  </div>
+
   @if (isLoading) {
     <div class="loading">A carregar jogos...</div>
   }

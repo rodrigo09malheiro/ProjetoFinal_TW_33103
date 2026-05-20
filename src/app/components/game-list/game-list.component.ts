@@ -12,6 +12,11 @@ interface Game {
   released: string;
 }
 
+interface FilterOption {
+  id: number;
+  name: string;
+}
+
 @Component({
   selector: 'app-game-list',
   standalone: true,
@@ -28,25 +33,61 @@ export class GameListComponent implements OnInit {
   currentPage = 1;
   isLoading = false;
 
+  genres: FilterOption[] = [];
+  platforms: FilterOption[] = [];
+  selectedGenre = '';
+  selectedPlatform = '';
+
   ngOnInit(): void {
     this.loadGames();
+    this.loadGenres();
+    this.loadPlatforms();
   }
 
   loadGames(): void {
     this.isLoading = true;
-    this.rawgService.getGames(this.currentPage, this.searchQuery).subscribe({
+    this.rawgService.getGames(this.currentPage, this.searchQuery, this.selectedGenre, this.selectedPlatform).subscribe({
       next: (data: unknown) => {
         const response = data as { results: Game[] };
         this.games = response.results;
         this.isLoading = false;
       },
-      error: () => {
-        this.isLoading = false;
+      error: () => { this.isLoading = false; }
+    });
+  }
+
+  loadGenres(): void {
+    this.rawgService.getGenres().subscribe({
+      next: (data: unknown) => {
+        const response = data as { results: FilterOption[] };
+        this.genres = response.results;
+      }
+    });
+  }
+
+  loadPlatforms(): void {
+    this.rawgService.getPlatforms().subscribe({
+      next: (data: unknown) => {
+        const response = data as { results: FilterOption[] };
+        this.platforms = response.results;
       }
     });
   }
 
   onSearch(): void {
+    this.currentPage = 1;
+    this.loadGames();
+  }
+
+  onFilterChange(): void {
+    this.currentPage = 1;
+    this.loadGames();
+  }
+
+  clearFilters(): void {
+    this.selectedGenre = '';
+    this.selectedPlatform = '';
+    this.searchQuery = '';
     this.currentPage = 1;
     this.loadGames();
   }
