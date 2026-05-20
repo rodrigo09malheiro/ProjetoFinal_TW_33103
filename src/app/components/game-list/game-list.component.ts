@@ -40,6 +40,17 @@ export class GameListComponent implements OnInit {
   platforms: FilterOption[] = [];
   selectedGenre = '';
   selectedPlatform = '';
+  selectedOrdering = '';
+
+  orderingOptions = [
+    { value: '', label: '📊 Ordenação padrão' },
+    { value: '-rating', label: '⭐ Melhor rating' },
+    { value: 'rating', label: '⭐ Pior rating' },
+    { value: '-released', label: '📅 Mais recentes' },
+    { value: 'released', label: '📅 Mais antigos' },
+    { value: 'name', label: '🔤 Nome (A-Z)' },
+    { value: '-name', label: '🔤 Nome (Z-A)' },
+  ];
 
   ngOnInit(): void {
     this.loadGames();
@@ -49,7 +60,7 @@ export class GameListComponent implements OnInit {
 
   loadGames(): void {
     this.isLoading = true;
-    this.rawgService.getGames(this.currentPage, this.searchQuery, this.selectedGenre, this.selectedPlatform).subscribe({
+    this.rawgService.getGames(this.currentPage, this.searchQuery, this.selectedGenre, this.selectedPlatform, this.selectedOrdering).subscribe({
       next: (data: unknown) => {
         const response = data as { results: Game[], count: number };
         this.games = response.results;
@@ -92,6 +103,7 @@ export class GameListComponent implements OnInit {
   clearFilters(): void {
     this.selectedGenre = '';
     this.selectedPlatform = '';
+    this.selectedOrdering = '';
     this.searchQuery = '';
     this.currentPage = 1;
     this.loadGames();

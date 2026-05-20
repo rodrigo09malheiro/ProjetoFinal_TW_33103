@@ -26,7 +26,13 @@
       }
     </select>
 
-    @if (selectedGenre || selectedPlatform || searchQuery) {
+    <select [(ngModel)]="selectedOrdering" (change)="onFilterChange()">
+      @for (option of orderingOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+
+    @if (selectedGenre || selectedPlatform || searchQuery || selectedOrdering) {
       <button class="btn-clear" (click)="clearFilters()">✕ Limpar filtros</button>
     }
   </div>

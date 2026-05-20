@@ -1,0 +1,58 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.content {
+  text-align: center;
+  padding: 40px;
+}
+
+.error-code {
+  font-size: 120px;
+  font-weight: 900;
+  color: #e63946;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.gamepad {
+  font-size: 60px;
+  margin-bottom: 20px;
+  animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+h1 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+button {
+  padding: 12px 28px;
+  background-color: #e63946;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #c1121f;
+}

@@ -10,13 +10,14 @@ export class RawgService {
   private apiKey = '25a159d8a2ed4f7faffbe7a8bf3b4572';
   private baseUrl = 'https://api.rawg.io/api';
 
-  getGames(page = 1, search = '', genreId = '', platformId = ''): Observable<unknown> {
-    let url = `${this.baseUrl}/games?key=${this.apiKey}&page=${page}&page_size=20`;
-    if (search) url += `&search=${search}`;
-    if (genreId) url += `&genres=${genreId}`;
-    if (platformId) url += `&platforms=${platformId}`;
-    return this.http.get(url);
-  }
+  getGames(page = 1, search = '', genreId = '', platformId = '', ordering = ''): Observable<unknown> {
+  let url = `${this.baseUrl}/games?key=${this.apiKey}&page=${page}&page_size=20`;
+  if (search) url += `&search=${search}`;
+  if (genreId) url += `&genres=${genreId}`;
+  if (platformId) url += `&platforms=${platformId}`;
+  if (ordering) url += `&ordering=${ordering}`;
+  return this.http.get(url);
+}
 
   getGameById(id: number): Observable<unknown> {
     return this.http.get(`${this.baseUrl}/games/${id}?key=${this.apiKey}`);
