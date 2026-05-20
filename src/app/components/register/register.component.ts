@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -12,12 +13,14 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent {
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   username = '';
   email = '';
   password = '';
   confirmPassword = '';
   errorMessage = '';
+  isLoading = false;
 
   onRegister(): void {
     if (!this.username || !this.email || !this.password || !this.confirmPassword) {
@@ -28,8 +31,19 @@ export class RegisterComponent {
       this.errorMessage = 'As passwords não coincidem.';
       return;
     }
-    // Ligação ao backend será feita na Sprint 2
-    console.log('Registo com:', this.username, this.email);
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.authService.register(this.username, this.email, this.password).subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.error || 'Erro ao registar.';
+        this.isLoading = false;
+      }
+    });
   }
 
   goToLogin(): void {
