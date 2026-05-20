@@ -30,4 +30,12 @@ export class RawgService {
   getPlatforms(): Observable<unknown> {
     return this.http.get(`${this.baseUrl}/platforms?key=${this.apiKey}&page_size=20`);
   }
+
+  getGameScreenshots(id: number): Observable<unknown> {
+  return this.http.get(`${this.baseUrl}/games/${id}/screenshots?key=${this.apiKey}`);
+}
+
+getSimilarGames(id: number): Observable<unknown> {
+  return this.http.get(`${this.baseUrl}/games/${id}/game-series?key=${this.apiKey}`);
+}
 }

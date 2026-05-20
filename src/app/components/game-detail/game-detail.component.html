@@ -73,5 +73,59 @@
         }
       </div>
     </div>
+
+    @if (screenshots.length > 0) {
+      <div class="screenshots">
+        <h2>Screenshots</h2>
+        <div class="screenshots-grid">
+          @for (screenshot of screenshots; track screenshot.id) {
+            <img
+              [src]="screenshot.image"
+              [alt]="game.name"
+              class="screenshot-thumb"
+              (click)="openScreenshot(screenshot.image)"
+              (keyup.enter)="openScreenshot(screenshot.image)"
+              tabindex="0"
+              role="button"
+            />
+          }
+        </div>
+      </div>
+    }
+
+    @if (similarGames.length > 0) {
+      <div class="similar-games">
+        <h2>Jogos da mesma série</h2>
+        <div class="similar-grid">
+          @for (similar of similarGames; track similar.id) {
+            <div
+              class="similar-card"
+              (click)="goToGame(similar.id)"
+              (keyup.enter)="goToGame(similar.id)"
+              tabindex="0"
+              role="button"
+            >
+              <img [src]="similar.background_image" [alt]="similar.name" />
+              <div class="similar-info">
+                <p>{{ similar.name }}</p>
+                <span>⭐ {{ similar.rating }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
   }
 </div>
+
+@if (selectedScreenshot) {
+  <div class="lightbox"
+    (click)="closeScreenshot()"
+    (keyup.escape)="closeScreenshot()"
+    tabindex="0"
+    role="dialog"
+    aria-modal="true"
+  >
+    <img [src]="selectedScreenshot" alt="Screenshot ampliada" />
+  </div>
+}

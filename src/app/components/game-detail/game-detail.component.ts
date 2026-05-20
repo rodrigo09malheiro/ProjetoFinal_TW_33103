@@ -16,6 +16,18 @@ interface GameDetail {
   platforms: { platform: { name: string } }[];
 }
 
+interface Screenshot {
+  id: number;
+  image: string;
+}
+
+interface SimilarGame {
+  id: number;
+  name: string;
+  background_image: string;
+  rating: number;
+}
+
 @Component({
   selector: 'app-game-detail',
   standalone: true,
@@ -38,6 +50,10 @@ export class GameDetailComponent implements OnInit {
   showReviewForm = false;
   successMessage = '';
 
+  screenshots: Screenshot[] = [];
+  similarGames: SimilarGame[] = [];
+  selectedScreenshot: string | null = null;
+
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.isLoading = true;
@@ -46,9 +62,27 @@ export class GameDetailComponent implements OnInit {
         this.game = data as GameDetail;
         this.isLoading = false;
         this.checkUserData();
+        this.loadScreenshots(id);
+        this.loadSimilarGames(id);
       },
-      error: () => {
-        this.isLoading = false;
+      error: () => { this.isLoading = false; }
+    });
+  }
+
+  loadScreenshots(id: number): void {
+    this.rawgService.getGameScreenshots(id).subscribe({
+      next: (data: unknown) => {
+        const response = data as { results: Screenshot[] };
+        this.screenshots = response.results.slice(0, 6);
+      }
+    });
+  }
+
+  loadSimilarGames(id: number): void {
+    this.rawgService.getSimilarGames(id).subscribe({
+      next: (data: unknown) => {
+        const response = data as { results: SimilarGame[] };
+        this.similarGames = response.results.slice(0, 6);
       }
     });
   }
@@ -115,6 +149,18 @@ export class GameDetailComponent implements OnInit {
         this.showReviewForm = false;
       }
     });
+  }
+
+  openScreenshot(image: string): void {
+    this.selectedScreenshot = image;
+  }
+
+  closeScreenshot(): void {
+    this.selectedScreenshot = null;
+  }
+
+  goToGame(id: number): void {
+    this.router.navigate(['/games', id]);
   }
 
   goBack(): void {
