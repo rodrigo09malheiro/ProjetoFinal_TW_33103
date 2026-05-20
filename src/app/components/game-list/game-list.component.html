@@ -1,1 +1,44 @@
-<p>game-list works!</p>
+<div class="container">
+  <h1>🎮 Game Library</h1>
+
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="Pesquisar jogos..."
+      (keyup.enter)="onSearch()"
+    />
+    <button (click)="onSearch()">Pesquisar</button>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading">A carregar jogos...</div>
+  }
+
+  @if (!isLoading) {
+    <div class="games-grid">
+      @for (game of games; track game.id) {
+        <div
+          class="game-card"
+          (click)="goToDetail(game.id)"
+          (keyup.enter)="goToDetail(game.id)"
+          tabindex="0"
+          role="button"
+        >
+          <img [src]="game.background_image" [alt]="game.name" />
+          <div class="game-info">
+            <h3>{{ game.name }}</h3>
+            <p>⭐ {{ game.rating }}</p>
+            <p>📅 {{ game.released }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="pagination">
+    <button (click)="prevPage()" [disabled]="currentPage === 1">← Anterior</button>
+    <span>Página {{ currentPage }}</span>
+    <button (click)="nextPage()">Próxima →</button>
+  </div>
+</div>
