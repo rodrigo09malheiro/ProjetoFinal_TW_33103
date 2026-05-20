@@ -6,6 +6,9 @@
     <div class="nav-links">
       <button (click)="goTo('games')">Jogos</button>
       <button (click)="goTo('profile')">👤 {{ username }}</button>
+      <button class="btn-dark" (click)="toggleDarkMode()">
+        {{ isDarkMode ? '☀️' : '🌙' }}
+      </button>
     </div>
   </nav>
 }

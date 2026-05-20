@@ -7,6 +7,7 @@
 h1 {
   text-align: center;
   margin-bottom: 20px;
+  color: var(--text);
 }
 
 .search-bar {
@@ -19,19 +20,32 @@ h1 {
 .search-bar input {
   width: 300px;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 16px;
+  background: var(--bg-card);
+  color: var(--text);
+  transition: border-color 0.2s;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--primary);
 }
 
 .search-bar button {
   padding: 10px 20px;
-  background-color: #e63946;
+  background-color: var(--primary);
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.search-bar button:hover {
+  background-color: var(--primary-hover);
 }
 
 .filters {
@@ -44,24 +58,26 @@ h1 {
 
 .filters select {
   padding: 10px 14px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 15px;
-  background: white;
+  background: var(--bg-card);
+  color: var(--text);
   cursor: pointer;
   min-width: 200px;
+  transition: border-color 0.2s;
 }
 
 .filters select:focus {
   outline: none;
-  border-color: #e63946;
+  border-color: var(--primary);
 }
 
 .btn-clear {
   padding: 10px 16px;
   background: none;
-  border: 1px solid #e63946;
-  color: #e63946;
+  border: 1px solid var(--primary);
+  color: var(--primary);
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
@@ -70,7 +86,7 @@ h1 {
 }
 
 .btn-clear:hover {
-  background-color: #e63946;
+  background-color: var(--primary);
   color: white;
 }
 
@@ -83,13 +99,21 @@ h1 {
 .game-card {
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow);
+  background: var(--bg-card);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: fadeIn 0.4s ease both;
 }
 
 .game-card:hover {
-  transform: scale(1.03);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .game-card img {
@@ -100,6 +124,7 @@ h1 {
 
 .game-info {
   padding: 10px;
+  color: var(--text);
 }
 
 .game-info h3 {
@@ -107,10 +132,48 @@ h1 {
   margin-bottom: 5px;
 }
 
-.loading {
-  text-align: center;
-  font-size: 18px;
-  margin: 40px 0;
+.game-info p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 2px 0;
+}
+
+/* Skeleton */
+.skeleton-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: var(--bg-card);
+}
+
+.skeleton-img {
+  width: 100%;
+  height: 150px;
+  background: var(--skeleton);
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton-info {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--skeleton);
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton-line.long  { width: 80%; }
+.skeleton-line.short { width: 45%; }
+
+@keyframes shimmer {
+  0%   { background-color: var(--skeleton); }
+  50%  { background-color: var(--skeleton-shine); }
+  100% { background-color: var(--skeleton); }
 }
 
 .pagination {
@@ -124,16 +187,21 @@ h1 {
 
 .pagination button {
   padding: 10px 20px;
-  background-color: #e63946;
+  background-color: var(--primary);
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 15px;
+  transition: background-color 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
 }
 
 .pagination button:disabled {
-  background-color: #ccc;
+  background-color: var(--border);
   cursor: not-allowed;
 }
 
@@ -143,7 +211,7 @@ h1 {
   align-items: center;
   gap: 8px;
   font-size: 15px;
-  color: #555;
+  color: var(--text-muted);
 }
 
 .jump {
@@ -155,23 +223,30 @@ h1 {
 .jump input {
   width: 65px;
   padding: 6px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 14px;
   text-align: center;
+  background: var(--bg-card);
+  color: var(--text);
 }
 
 .jump input:focus {
   outline: none;
-  border-color: #e63946;
+  border-color: var(--primary);
 }
 
 .jump button {
   padding: 6px 14px;
-  background-color: #e63946;
+  background-color: var(--primary);
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.jump button:hover {
+  background-color: var(--primary-hover);
 }

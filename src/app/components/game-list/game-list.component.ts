@@ -35,6 +35,7 @@ export class GameListComponent implements OnInit {
   jumpToPage = 1;
   isLoading = false;
   pageSize = 20;
+  skeletonItems = Array(20).fill(0);
 
   genres: FilterOption[] = [];
   platforms: FilterOption[] = [];

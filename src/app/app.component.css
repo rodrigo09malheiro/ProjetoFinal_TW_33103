@@ -6,6 +6,9 @@
   background-color: #e63946;
   color: white;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .nav-brand {
@@ -13,6 +16,7 @@
   font-weight: bold;
   cursor: pointer;
   user-select: none;
+  transition: opacity 0.2s;
 }
 
 .nav-brand:hover {
@@ -22,6 +26,7 @@
 .nav-links {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 .nav-links button {
@@ -33,9 +38,16 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.15s;
 }
 
 .nav-links button:hover {
   background: rgba(255,255,255,0.3);
+  transform: translateY(-1px);
+}
+
+.btn-dark {
+  font-size: 18px !important;
+  padding: 6px 12px !important;
+  border-radius: 50% !important;
 }

@@ -15,12 +15,25 @@ export class AppComponent implements OnInit {
 
   isLoggedIn = false;
   username: string | null = null;
+  isDarkMode = false;
 
   ngOnInit(): void {
     this.authService.username$.subscribe(username => {
       this.isLoggedIn = !!username;
       this.username = username;
     });
+
+    const saved = localStorage.getItem('darkMode');
+    if (saved === 'true') {
+      this.isDarkMode = true;
+      document.body.classList.add('dark');
+    }
+  }
+
+  toggleDarkMode(): void {
+    this.isDarkMode = !this.isDarkMode;
+    document.body.classList.toggle('dark', this.isDarkMode);
+    localStorage.setItem('darkMode', String(this.isDarkMode));
   }
 
   goTo(path: string): void {
