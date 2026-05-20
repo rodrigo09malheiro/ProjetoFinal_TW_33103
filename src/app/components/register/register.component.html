@@ -1,0 +1,57 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h1>🎮 GameTracker</h1>
+    <h2>Registo</h2>
+
+    @if (errorMessage) {
+      <div class="error">{{ errorMessage }}</div>
+    }
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input
+        id="username"
+        type="text"
+        [(ngModel)]="username"
+        placeholder="o teu username"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        [(ngModel)]="email"
+        placeholder="o teu email"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        [(ngModel)]="password"
+        placeholder="a tua password"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirmar Password</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        [(ngModel)]="confirmPassword"
+        placeholder="repete a password"
+      />
+    </div>
+
+    <button class="btn-primary" (click)="onRegister()">Registar</button>
+
+    <p class="switch">
+      Já tens conta?
+      <span (click)="goToLogin()" (keyup.enter)="goToLogin()" tabindex="0" role="button">Faz login aqui</span>
+    </p>
+  </div>
+</div>

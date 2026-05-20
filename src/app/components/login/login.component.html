@@ -1,0 +1,37 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h1>🎮 GameTracker</h1>
+    <h2>Login</h2>
+
+    @if (errorMessage) {
+      <div class="error">{{ errorMessage }}</div>
+    }
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        [(ngModel)]="email"
+        placeholder="o teu email"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        [(ngModel)]="password"
+        placeholder="a tua password"
+      />
+    </div>
+
+    <button class="btn-primary" (click)="onLogin()">Entrar</button>
+
+    <p class="switch">
+      Não tens conta?
+      <span (click)="goToRegister()" (keyup.enter)="goToRegister()" tabindex="0" role="button">Regista-te aqui</span>
+    </p>
+  </div>
+</div>
