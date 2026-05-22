@@ -8,6 +8,13 @@ interface AuthResponse {
   username: string;
 }
 
+interface ProfileResponse {
+  id: number;
+  username: string;
+  email: string;
+  avatar: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,6 +24,9 @@ export class AuthService {
 
   private usernameSubject = new BehaviorSubject<string | null>(this.getUsername());
   username$ = this.usernameSubject.asObservable();
+
+  private avatarSubject = new BehaviorSubject<string | null>(this.getAvatar());
+  avatar$ = this.avatarSubject.asObservable();
 
   register(username: string, email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, { username, email, password });
@@ -35,7 +45,33 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('avatar');
     this.usernameSubject.next(null);
+    this.avatarSubject.next(null);
+  }
+
+  getProfile(): Observable<ProfileResponse> {
+    return this.http.get<ProfileResponse>(`${this.apiUrl}/profile`);
+  }
+
+  updateProfile(data: { username?: string; email?: string; password?: string }): Observable<{ message: string; username: string }> {
+    return this.http.put<{ message: string; username: string }>(`${this.apiUrl}/profile`, data).pipe(
+      tap((res) => {
+        localStorage.setItem('username', res.username);
+        this.usernameSubject.next(res.username);
+      })
+    );
+  }
+
+  uploadAvatar(file: File): Observable<{ avatarUrl: string }> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return this.http.post<{ avatarUrl: string }>(`${this.apiUrl}/profile/avatar`, formData).pipe(
+      tap((res) => {
+        localStorage.setItem('avatar', res.avatarUrl);
+        this.avatarSubject.next(res.avatarUrl);
+      })
+    );
   }
 
   getToken(): string | null {
@@ -44,6 +80,10 @@ export class AuthService {
 
   getUsername(): string | null {
     return localStorage.getItem('username');
+  }
+
+  getAvatar(): string | null {
+    return localStorage.getItem('avatar');
   }
 
   isLoggedIn(): boolean {

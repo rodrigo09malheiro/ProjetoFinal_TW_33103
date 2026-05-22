@@ -4,11 +4,65 @@
   }
 
   @if (!isLoading) {
-    <div class="profile-header">
-      <div class="avatar">👤</div>
-      <h1>Olá, {{ username }}!</h1>
-      <p>Bem-vindo à tua área pessoal do GameDex.</p>
-    </div>
+    @if (!isEditing) {
+      <div class="profile-header">
+        <div class="avatar-container">
+          @if (avatarUrl) {
+            <img [src]="baseUrl + avatarUrl" alt="Avatar do Utilizador" class="profile-avatar" />
+          } @else {
+            <div class="avatar-placeholder">👤</div>
+          }
+        </div>
+        <h1>Olá, {{ username }}!</h1>
+        <p class="email-sub">{{ email }}</p>
+        <button class="btn-edit-toggle" (click)="toggleEdit()">⚙️ Editar Perfil</button>
+      </div>
+    }
+
+    @if (isEditing) {
+      <div class="edit-profile-card">
+        <h2>⚙️ Editar Perfil</h2>
+        
+        <div class="edit-avatar-section">
+          <div class="avatar-container">
+            @if (previewUrl) {
+              <img [src]="previewUrl" alt="Preview" class="profile-avatar" />
+            } @else if (avatarUrl) {
+              <img [src]="baseUrl + avatarUrl" alt="Avatar Atual" class="profile-avatar" />
+            } @else {
+              <div class="avatar-placeholder">👤</div>
+            }
+          </div>
+          <label for="file-upload" class="btn-file-label">Escolher Nova Imagem</label>
+          <input id="file-upload" type="file" (change)="onFileSelected($event)" accept="image/*" />
+        </div>
+
+        <form (ngSubmit)="saveProfile()" class="edit-form">
+          <div class="form-group">
+            <label>Nome de Utilizador</label>
+            <input type="text" [(ngModel)]="editUsername" name="username" required />
+          </div>
+
+          <div class="form-group">
+            <label>Correio Eletrónico (Email)</label>
+            <input type="email" [(ngModel)]="editEmail" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label>Nova Palavra-passe (deixar em branco para manter)</label>
+            <input type="password" [(ngModel)]="editPassword" name="password" placeholder="********" />
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="toggleEdit()">Cancelar</button>
+            <button type="submit" class="btn-submit">Guardar Alterações</button>
+          </div>
+        </form>
+      </div>
+    }
+
+    @if (messageSuccess) { <div class="alert alert-success">{{ messageSuccess }}</div> }
+    @if (messageError) { <div class="alert alert-danger">{{ messageError }}</div> }
 
     <div class="stats-grid">
       <div class="stat-card">
@@ -20,11 +74,6 @@
         <span class="icon">➕</span>
         <div class="stat-value">{{ wishlist.length }}</div>
         <div class="stat-label">Na Wishlist</div>
-      </div>
-      <div class="stat-card">
-        <span class="icon">✏️</span>
-        <div class="stat-value">{{ reviews.length }}</div>
-        <div class="stat-label">Reviews Escritas</div>
       </div>
     </div>
 
@@ -55,27 +104,6 @@
               <div class="mini-card" (click)="goToGame(game.game_id)" (keyup.enter)="goToGame(game.game_id)" tabindex="0" role="button">
                 <img [src]="game.game_image" [alt]="game.game_name" />
                 <p>{{ game.game_name }}</p>
-              </div>
-            }
-          </div>
-        }
-      </div>
-
-      <div class="section-block">
-        <h2>✏️ As Minhas Reviews</h2>
-        @if (reviews.length === 0) {
-          <p class="empty-msg">Ainda não escreveste nenhuma review.</p>
-        } @else {
-          <div class="reviews-list">
-            @for (review of reviews; track review.game_id) {
-              <div class="review-card" (click)="goToGame(review.game_id)" (keyup.enter)="goToGame(review.game_id)" tabindex="0" role="button">
-                <div class="review-header">
-                  <span class="review-game">{{ review.game_name }}</span>
-                  <span class="review-rating">⭐ {{ review.rating }}/5</span>
-                </div>
-                @if (review.comment) {
-                  <p class="review-comment">{{ review.comment }}</p>
-                }
               </div>
             }
           </div>
