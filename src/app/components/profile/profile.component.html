@@ -7,7 +7,7 @@
     <div class="profile-header">
       <div class="avatar">👤</div>
       <h1>Olá, {{ username }}!</h1>
-      <p>Bem-vindo à tua área pessoal do GameTracker.</p>
+      <p>Bem-vindo à tua área pessoal do GameDex.</p>
     </div>
 
     <div class="stats-grid">
@@ -55,6 +55,27 @@
               <div class="mini-card" (click)="goToGame(game.game_id)" (keyup.enter)="goToGame(game.game_id)" tabindex="0" role="button">
                 <img [src]="game.game_image" [alt]="game.game_name" />
                 <p>{{ game.game_name }}</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="section-block">
+        <h2>✏️ As Minhas Reviews</h2>
+        @if (reviews.length === 0) {
+          <p class="empty-msg">Ainda não escreveste nenhuma review.</p>
+        } @else {
+          <div class="reviews-list">
+            @for (review of reviews; track review.game_id) {
+              <div class="review-card" (click)="goToGame(review.game_id)" (keyup.enter)="goToGame(review.game_id)" tabindex="0" role="button">
+                <div class="review-header">
+                  <span class="review-game">{{ review.game_name }}</span>
+                  <span class="review-rating">⭐ {{ review.rating }}/5</span>
+                </div>
+                @if (review.comment) {
+                  <p class="review-comment">{{ review.comment }}</p>
+                }
               </div>
             }
           </div>

@@ -128,3 +128,49 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.review-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.review-game {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.review-rating {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fbbf24;
+}
+
+.review-comment {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}

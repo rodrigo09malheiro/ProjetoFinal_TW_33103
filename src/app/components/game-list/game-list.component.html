@@ -14,75 +14,92 @@
     <button (click)="onSearch()">Pesquisar</button>
   </div>
 
-  <div class="filters">
-    <select [(ngModel)]="selectedGenre" (change)="onSearch()">
-      <option value="">🎯 Todos os géneros</option>
-      @for (genre of genres; track genre.id) {
-        <option [value]="genre.id">{{ genre.name }}</option>
-      }
-    </select>
-
-    <select [(ngModel)]="selectedPlatform" (change)="onSearch()">
-      <option value="">🖥️ Todas as plataformas</option>
-      @for (platform of platforms; track platform.id) {
-        <option [value]="platform.id">{{ platform.name }}</option>
-      }
-    </select>
-
-    <select [(ngModel)]="ordering" (change)="onSearch()">
-      <option value="">📊 Ordenação padrão</option>
-      <option value="-rating">⭐ Melhor avaliação</option>
-      <option value="-released">🆕 Mais recentes</option>
-      <option value="name">🔤 A-Z</option>
-    </select>
-  </div>
-
-  @if (isLoading) {
-    <div class="games-grid">
-      @for (item of skeletons; track item) {
-        <div class="skeleton">
-          <div class="skeleton-img"></div>
-          <div class="skeleton-body">
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line short"></div>
-          </div>
+  <div class="main-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3>🎭 Género</h3>
+        <div class="filter-list">
+          <div class="filter-item" [class.active]="selectedGenre === ''" (click)="selectedGenre = ''; onSearch()" (keyup.enter)="selectedGenre = ''; onSearch()" tabindex="0" role="button">Todos</div>
+          @for (genre of genres; track genre.id) {
+            <div class="filter-item" [class.active]="selectedGenre === genre.id.toString()" (click)="selectedGenre = genre.id.toString(); onSearch()" (keyup.enter)="selectedGenre = genre.id.toString(); onSearch()" tabindex="0" role="button">{{ genre.name }}</div>
+          }
         </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>🖥️ Plataforma</h3>
+        <div class="filter-list">
+          <div class="filter-item" [class.active]="selectedPlatform === ''" (click)="selectedPlatform = ''; onSearch()" (keyup.enter)="selectedPlatform = ''; onSearch()" tabindex="0" role="button">Todas</div>
+          @for (platform of platforms; track platform.id) {
+            <div class="filter-item" [class.active]="selectedPlatform === platform.id.toString()" (click)="selectedPlatform = platform.id.toString(); onSearch()" (keyup.enter)="selectedPlatform = platform.id.toString(); onSearch()" tabindex="0" role="button">{{ platform.name }}</div>
+          }
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>📊 Ordenar por</h3>
+        <div class="filter-list">
+          <div class="filter-item" [class.active]="ordering === ''" (click)="ordering = ''; onSearch()" tabindex="0" role="button">Padrão</div>
+          <div class="filter-item" [class.active]="ordering === '-rating'" (click)="ordering = '-rating'; onSearch()" tabindex="0" role="button">⭐ Melhor avaliação</div>
+          <div class="filter-item" [class.active]="ordering === '-released'" (click)="ordering = '-released'; onSearch()" tabindex="0" role="button">🆕 Mais recentes</div>
+          <div class="filter-item" [class.active]="ordering === 'name'" (click)="ordering = 'name'; onSearch()" tabindex="0" role="button">🔤 A-Z</div>
+        </div>
+      </div>
+
+      @if (selectedGenre || selectedPlatform || ordering || searchQuery) {
+        <button class="btn-clear" (click)="clearFilters()">✕ Limpar filtros</button>
       }
-    </div>
-  }
+    </aside>
 
-  @if (!isLoading && games.length === 0) {
-    <div class="no-results">
-      <p>😕 Nenhum jogo encontrado</p>
-    </div>
-  }
-
-  @if (!isLoading && games.length > 0) {
-    <div class="games-grid">
-      @for (game of games; track game.id) {
-        <div
-          class="game-card"
-          (click)="goToDetail(game.id)"
-          (keyup.enter)="goToDetail(game.id)"
-          tabindex="0"
-          role="button"
-        >
-          <img [src]="game.background_image" [alt]="game.name" />
-          <div class="game-card-body">
-            <h3>{{ game.name }}</h3>
-            <div class="game-meta">
-              <span class="rating">⭐ {{ game.rating }}</span>
-              <span>{{ game.released | date:'yyyy' }}</span>
+    <div class="content">
+      @if (isLoading) {
+        <div class="games-grid">
+          @for (item of skeletons; track item) {
+            <div class="skeleton">
+              <div class="skeleton-img"></div>
+              <div class="skeleton-body">
+                <div class="skeleton-line"></div>
+                <div class="skeleton-line short"></div>
+              </div>
             </div>
-          </div>
+          }
         </div>
       }
-    </div>
-  }
 
-  <div class="pagination">
-    <button (click)="prevPage()" [disabled]="currentPage === 1">← Anterior</button>
-    <span>Página {{ currentPage }}</span>
-    <button (click)="nextPage()">Próxima →</button>
+      @if (!isLoading && games.length === 0) {
+        <div class="no-results">
+          <p>😕 Nenhum jogo encontrado</p>
+        </div>
+      }
+
+      @if (!isLoading && games.length > 0) {
+        <div class="games-grid">
+          @for (game of games; track game.id) {
+            <div
+              class="game-card"
+              (click)="goToDetail(game.id)"
+              (keyup.enter)="goToDetail(game.id)"
+              tabindex="0"
+              role="button"
+            >
+              <img [src]="game.background_image" [alt]="game.name" />
+              <div class="game-card-body">
+                <h3>{{ game.name }}</h3>
+                <div class="game-meta">
+                  <span class="rating">⭐ {{ game.rating }}</span>
+                  <span>{{ game.released | date:'yyyy' }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="pagination">
+        <button (click)="prevPage()" [disabled]="currentPage === 1">← Anterior</button>
+        <span>Página {{ currentPage }}</span>
+        <button (click)="nextPage()">Próxima →</button>
+      </div>
+    </div>
   </div>
 </div>
