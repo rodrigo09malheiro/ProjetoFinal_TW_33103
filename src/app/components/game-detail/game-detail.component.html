@@ -1,120 +1,138 @@
-<div class="detail-container">
+<div class="detail-page">
   @if (isLoading) {
     <div class="loading">A carregar...</div>
   }
 
   @if (game) {
-    <button class="btn-back" (click)="goBack()">← Voltar</button>
+    <!-- HERO com imagem + degradê -->
+    <div class="hero" [style.background-image]="'url(' + game.background_image + ')'">
+      <div class="hero-overlay">
+        <div class="hero-content">
+          <button class="btn-back" (click)="goBack()">← Voltar</button>
 
-    <div class="game-header">
-      <img [src]="game.background_image" [alt]="game.name" class="game-cover" />
-      <div class="game-info">
-        <h1>{{ game.name }}</h1>
-        <p class="rating">⭐ {{ game.rating }}/5</p>
-        <p class="released">📅 {{ game.released }}</p>
-
-        <div class="genres">
-          @for (genre of game.genres; track genre.name) {
-            <span class="tag">{{ genre.name }}</span>
-          }
-        </div>
-
-        <div class="action-buttons">
-          <button class="btn-action" [class.active]="isFavorite" (click)="toggleFavorite()">
-            {{ isFavorite ? '❤️ Favorito' : '🤍 Adicionar aos Favoritos' }}
-          </button>
-          <button class="btn-action" [class.active]="isInWishlist" (click)="toggleWishlist()">
-            {{ isInWishlist ? '✅ Na Wishlist' : '➕ Adicionar à Wishlist' }}
-          </button>
-          <button class="btn-action" (click)="showReviewForm = !showReviewForm">
-            ✏️ Escrever Review
-          </button>
-        </div>
-
-        @if (successMessage) {
-          <div class="success">{{ successMessage }}</div>
-        }
-
-        @if (showReviewForm) {
-          <div class="review-form">
-            <h3>A tua review</h3>
-            <div class="stars">
-              @for (star of [1,2,3,4,5]; track star) {
-                <span
-                  class="star"
-                  [class.selected]="star <= reviewRating"
-                  (click)="reviewRating = star"
-                  (keyup.enter)="reviewRating = star"
-                  tabindex="0"
-                  role="button">★</span>
+          <div class="hero-info">
+            <div class="genres">
+              @for (genre of game.genres; track genre.name) {
+                <span class="tag">{{ genre.name }}</span>
               }
             </div>
-            <textarea
-              [(ngModel)]="reviewComment"
-              placeholder="Escreve o teu comentário..."
-              rows="3"
-            ></textarea>
-            <button class="btn-primary" (click)="submitReview()">Guardar Review</button>
-          </div>
-        }
-      </div>
-    </div>
-
-    <div class="description">
-      <h2>Descrição</h2>
-      <p>{{ game.description_raw }}</p>
-    </div>
-
-    <div class="platforms">
-      <h2>Plataformas</h2>
-      <div class="tags">
-        @for (p of game.platforms; track p.platform.name) {
-          <span class="tag">{{ p.platform.name }}</span>
-        }
-      </div>
-    </div>
-
-    @if (screenshots.length > 0) {
-      <div class="screenshots">
-        <h2>Screenshots</h2>
-        <div class="screenshots-grid">
-          @for (screenshot of screenshots; track screenshot.id) {
-            <img
-              [src]="screenshot.image"
-              [alt]="game.name"
-              class="screenshot-thumb"
-              (click)="openScreenshot(screenshot.image)"
-              (keyup.enter)="openScreenshot(screenshot.image)"
-              tabindex="0"
-              role="button"
-            />
-          }
-        </div>
-      </div>
-    }
-
-    @if (similarGames.length > 0) {
-      <div class="similar-games">
-        <h2>Jogos da mesma série</h2>
-        <div class="similar-grid">
-          @for (similar of similarGames; track similar.id) {
-            <div
-              class="similar-card"
-              (click)="goToGame(similar.id)"
-              (keyup.enter)="goToGame(similar.id)"
-              tabindex="0"
-              role="button"
-            >
-              <img [src]="similar.background_image" [alt]="similar.name" />
-              <div class="similar-info">
-                <p>{{ similar.name }}</p>
-                <span>⭐ {{ similar.rating }}</span>
-              </div>
+            <h1>{{ game.name }}</h1>
+            <div class="meta">
+              <span class="rating">⭐ {{ game.rating }}/5</span>
+              <span class="dot">·</span>
+              <span>{{ game.released }}</span>
             </div>
+
+            <div class="action-buttons">
+              <button
+                class="btn-action btn-favorite"
+                [class.active]="isFavorite"
+                (click)="toggleFavorite()">
+                {{ isFavorite ? '❤️ Favorito' : '🤍 Favoritos' }}
+              </button>
+              <button
+                class="btn-action btn-wishlist"
+                [class.active]="isInWishlist"
+                (click)="toggleWishlist()">
+                {{ isInWishlist ? '✅ Wishlist' : '➕ Wishlist' }}
+              </button>
+              <button
+                class="btn-action btn-review"
+                (click)="showReviewForm = !showReviewForm">
+                ✏️ Review
+              </button>
+            </div>
+
+            @if (successMessage) {
+              <div class="success">{{ successMessage }}</div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTEÚDO abaixo do hero -->
+    <div class="content">
+
+      @if (showReviewForm) {
+        <div class="section review-form-section">
+          <h2>A tua review</h2>
+          <div class="stars">
+            @for (star of [1,2,3,4,5]; track star) {
+              <span
+                class="star"
+                [class.selected]="star <= reviewRating"
+                (click)="reviewRating = star"
+                (keyup.enter)="reviewRating = star"
+                tabindex="0"
+                role="button">★</span>
+            }
+          </div>
+          <textarea
+            [(ngModel)]="reviewComment"
+            placeholder="Escreve o teu comentário..."
+            rows="3"
+          ></textarea>
+          <button class="btn-submit" (click)="submitReview()">Guardar Review</button>
+        </div>
+      }
+
+      <div class="section">
+        <h2>Descrição</h2>
+        <p class="description-text">{{ game.description_raw }}</p>
+      </div>
+
+      <div class="section">
+        <h2>Plataformas</h2>
+        <div class="tags">
+          @for (p of game.platforms; track p.platform.name) {
+            <span class="tag platform">{{ p.platform.name }}</span>
           }
         </div>
       </div>
-    }
+
+      @if (screenshots.length > 0) {
+        <div class="section">
+          <h2>Screenshots</h2>
+          <div class="screenshots-grid">
+            @for (screenshot of screenshots; track screenshot.id) {
+              <img
+                [src]="screenshot.image"
+                [alt]="game.name"
+                class="screenshot-thumb"
+                (click)="openScreenshot(screenshot.image)"
+                (keyup.enter)="openScreenshot(screenshot.image)"
+                tabindex="0"
+                role="button"
+              />
+            }
+          </div>
+        </div>
+      }
+
+      @if (similarGames.length > 0) {
+        <div class="section">
+          <h2>Jogos da mesma série</h2>
+          <div class="similar-grid">
+            @for (similar of similarGames; track similar.id) {
+              <div
+                class="similar-card"
+                (click)="goToGame(similar.id)"
+                (keyup.enter)="goToGame(similar.id)"
+                tabindex="0"
+                role="button"
+              >
+                <img [src]="similar.background_image" [alt]="similar.name" />
+                <div class="similar-info">
+                  <p>{{ similar.name }}</p>
+                  <span>⭐ {{ similar.rating }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
   }
 </div>
 
