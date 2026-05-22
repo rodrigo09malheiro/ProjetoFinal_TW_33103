@@ -1,35 +1,68 @@
-*, *::before, *::after {
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  transition: background-color 0.3s, color 0.3s;
+:root {
+  --primary: #6c63ff;
+  --primary-dark: #5a52d5;
+  --accent: #ff6584;
+  --bg: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-elevated: #16213e;
+  --text: #e8e8f0;
+  --text-muted: #8888aa;
+  --border: rgba(108, 99, 255, 0.2);
+  --success: #4ade80;
+  --danger: #f87171;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --radius: 12px;
+  --radius-lg: 20px;
 }
 
-:root {
-  --bg: #f8f9fa;
-  --bg-card: #ffffff;
-  --text: #1a1a2e;
-  --text-muted: #666;
-  --border: #ddd;
-  --primary: #e63946;
-  --primary-hover: #c1121f;
-  --shadow: 0 2px 8px rgba(0,0,0,0.12);
-  --skeleton: #e0e0e0;
-  --skeleton-shine: #f5f5f5;
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
 }
 
 body.dark {
-  --bg: #121212;
-  --bg-card: #1e1e2e;
-  --text: #e0e0e0;
-  --text-muted: #aaa;
-  --border: #333;
-  --shadow: 0 2px 8px rgba(0,0,0,0.5);
-  --skeleton: #2a2a2a;
-  --skeleton-shine: #333;
+  --bg: #07070f;
+  --bg-card: #111122;
+  --bg-elevated: #0d0d20;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+button {
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input, select, textarea {
+  font-family: 'Inter', sans-serif;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
 }

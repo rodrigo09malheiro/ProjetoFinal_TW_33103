@@ -1,5 +1,8 @@
-<div class="container">
-  <h1>🎮 Game Library</h1>
+<div class="page">
+  <div class="page-header">
+    <h1>🎮 Game Library</h1>
+    <p>Descobre e guarda os teus jogos favoritos</p>
+  </div>
 
   <div class="search-bar">
     <input
@@ -12,39 +15,35 @@
   </div>
 
   <div class="filters">
-    <select [(ngModel)]="selectedGenre" (change)="onFilterChange()">
-      <option value="">🎭 Todos os géneros</option>
+    <select [(ngModel)]="selectedGenre" (change)="onSearch()">
+      <option value="">🎯 Todos os géneros</option>
       @for (genre of genres; track genre.id) {
         <option [value]="genre.id">{{ genre.name }}</option>
       }
     </select>
 
-    <select [(ngModel)]="selectedPlatform" (change)="onFilterChange()">
+    <select [(ngModel)]="selectedPlatform" (change)="onSearch()">
       <option value="">🖥️ Todas as plataformas</option>
       @for (platform of platforms; track platform.id) {
         <option [value]="platform.id">{{ platform.name }}</option>
       }
     </select>
 
-    <select [(ngModel)]="selectedOrdering" (change)="onFilterChange()">
-      @for (option of orderingOptions; track option.value) {
-        <option [value]="option.value">{{ option.label }}</option>
-      }
+    <select [(ngModel)]="ordering" (change)="onSearch()">
+      <option value="">📊 Ordenação padrão</option>
+      <option value="-rating">⭐ Melhor avaliação</option>
+      <option value="-released">🆕 Mais recentes</option>
+      <option value="name">🔤 A-Z</option>
     </select>
-
-    @if (selectedGenre || selectedPlatform || searchQuery || selectedOrdering) {
-      <button class="btn-clear" (click)="clearFilters()">✕ Limpar filtros</button>
-    }
   </div>
 
   @if (isLoading) {
     <div class="games-grid">
-      @for (item of skeletonItems; track item) {
-        <div class="skeleton-card">
+      @for (item of skeletons; track item) {
+        <div class="skeleton">
           <div class="skeleton-img"></div>
-          <div class="skeleton-info">
-            <div class="skeleton-line long"></div>
-            <div class="skeleton-line short"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line"></div>
             <div class="skeleton-line short"></div>
           </div>
         </div>
@@ -52,7 +51,13 @@
     </div>
   }
 
-  @if (!isLoading) {
+  @if (!isLoading && games.length === 0) {
+    <div class="no-results">
+      <p>😕 Nenhum jogo encontrado</p>
+    </div>
+  }
+
+  @if (!isLoading && games.length > 0) {
     <div class="games-grid">
       @for (game of games; track game.id) {
         <div
@@ -63,10 +68,12 @@
           role="button"
         >
           <img [src]="game.background_image" [alt]="game.name" />
-          <div class="game-info">
+          <div class="game-card-body">
             <h3>{{ game.name }}</h3>
-            <p>⭐ {{ game.rating }}</p>
-            <p>📅 {{ game.released }}</p>
+            <div class="game-meta">
+              <span class="rating">⭐ {{ game.rating }}</span>
+              <span>{{ game.released | date:'yyyy' }}</span>
+            </div>
           </div>
         </div>
       }
@@ -75,21 +82,7 @@
 
   <div class="pagination">
     <button (click)="prevPage()" [disabled]="currentPage === 1">← Anterior</button>
-
-    <div class="page-info">
-      <span>Página {{ currentPage }} de {{ totalPages }}</span>
-      <div class="jump">
-        <input
-          type="number"
-          [(ngModel)]="jumpToPage"
-          [min]="1"
-          [max]="totalPages"
-          (keyup.enter)="onJumpToPage()"
-        />
-        <button (click)="onJumpToPage()">Ir</button>
-      </div>
-    </div>
-
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Próxima →</button>
+    <span>Página {{ currentPage }}</span>
+    <button (click)="nextPage()">Próxima →</button>
   </div>
 </div>

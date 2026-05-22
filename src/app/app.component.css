@@ -1,60 +1,67 @@
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 30px;
-  background-color: #e63946;
-  color: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 64px;
+  background: rgba(15, 15, 26, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
 }
 
 .nav-brand {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   cursor: pointer;
-  user-select: none;
-  transition: opacity 0.2s;
-}
-
-.nav-brand:hover {
-  opacity: 0.85;
+  letter-spacing: -0.5px;
 }
 
 .nav-links {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 8px;
 }
 
 .nav-links button {
-  background: rgba(255,255,255,0.15);
-  border: none;
-  color: white;
   padding: 8px 16px;
   border-radius: 8px;
-  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
   font-size: 14px;
-  font-weight: bold;
-  transition: background 0.2s, transform 0.15s;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .nav-links button:hover {
-  background: rgba(255,255,255,0.3);
-  transform: translateY(-1px);
+  background: var(--glass);
+  color: var(--text);
+  border-color: var(--glass-border);
 }
 
 .btn-dark {
-  font-size: 18px !important;
-  padding: 6px 12px !important;
-  border-radius: 50% !important;
+  width: 36px !important;
+  padding: 8px !important;
+  text-align: center;
 }
+
 .btn-logout {
-  background: rgba(0,0,0,0.2) !important;
+  color: var(--danger) !important;
+  border-color: rgba(248, 113, 113, 0.2) !important;
 }
 
 .btn-logout:hover {
-  background: rgba(0,0,0,0.4) !important;
+  background: rgba(248, 113, 113, 0.1) !important;
+}
+
+.nav-user {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
 }
