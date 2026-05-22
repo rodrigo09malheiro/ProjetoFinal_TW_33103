@@ -36,6 +36,11 @@ export class AppComponent implements OnInit {
     localStorage.setItem('darkMode', String(this.isDarkMode));
   }
 
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   goTo(path: string): void {
     this.router.navigate([`/${path}`]);
   }
