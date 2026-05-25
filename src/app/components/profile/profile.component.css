@@ -221,3 +221,45 @@ input[type="file"] {
   margin: 8px; font-size: 12px; font-weight: bold; color: var(--text);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: var(--shadow);
+}
+
+.review-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.review-stars span {
+  color: var(--border);
+  font-size: 18px;
+}
+
+.review-stars span.lit {
+  color: #fbbf24;
+}
+
+.review-comment {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 0;
+}

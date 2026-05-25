@@ -1,6 +1,6 @@
 <div class="profile-container">
   @if (isLoading) {
-    <div class="loading">A carregar estatísticas do perfil...</div>
+    <div class="loading">A carregar...</div>
   }
 
   @if (!isLoading) {
@@ -8,13 +8,12 @@
       <div class="profile-header">
         <div class="avatar-container">
           @if (avatarUrl) {
-            <img [src]="baseUrl + avatarUrl" alt="Avatar do Utilizador" class="profile-avatar" />
+            <img [src]="baseUrl + avatarUrl" alt="Avatar" class="profile-avatar" />
           } @else {
             <div class="avatar-placeholder">👤</div>
           }
         </div>
         <h1>Olá, {{ username }}!</h1>
-        <p class="email-sub">{{ email }}</p>
         <button class="btn-edit-toggle" (click)="toggleEdit()">⚙️ Editar Perfil</button>
       </div>
     }
@@ -22,7 +21,7 @@
     @if (isEditing) {
       <div class="edit-profile-card">
         <h2>⚙️ Editar Perfil</h2>
-        
+
         <div class="edit-avatar-section">
           <div class="avatar-container">
             @if (previewUrl) {
@@ -33,31 +32,19 @@
               <div class="avatar-placeholder">👤</div>
             }
           </div>
-          <label for="file-upload" class="btn-file-label">Escolher Nova Imagem</label>
+          <label for="file-upload" class="btn-file-label">📷 Escolher Imagem</label>
           <input id="file-upload" type="file" (change)="onFileSelected($event)" accept="image/*" />
         </div>
 
-        <form (ngSubmit)="saveProfile()" class="edit-form">
-          <div class="form-group">
-            <label>Nome de Utilizador</label>
-            <input type="text" [(ngModel)]="editUsername" name="username" required />
-          </div>
+        <div class="form-group">
+          <label for="editUsername">Nome de Utilizador</label>
+          <input id="editUsername" type="text" [(ngModel)]="editUsername" name="username" />
+        </div>
 
-          <div class="form-group">
-            <label>Correio Eletrónico (Email)</label>
-            <input type="email" [(ngModel)]="editEmail" name="email" required />
-          </div>
-
-          <div class="form-group">
-            <label>Nova Palavra-passe (deixar em branco para manter)</label>
-            <input type="password" [(ngModel)]="editPassword" name="password" placeholder="********" />
-          </div>
-
-          <div class="form-actions">
-            <button type="button" class="btn-cancel" (click)="toggleEdit()">Cancelar</button>
-            <button type="submit" class="btn-submit">Guardar Alterações</button>
-          </div>
-        </form>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="toggleEdit()">Cancelar</button>
+          <button type="button" class="btn-submit" (click)="saveProfile()">Guardar</button>
+        </div>
       </div>
     }
 
@@ -74,6 +61,11 @@
         <span class="icon">➕</span>
         <div class="stat-value">{{ wishlist.length }}</div>
         <div class="stat-label">Na Wishlist</div>
+      </div>
+      <div class="stat-card">
+        <span class="icon">✏️</span>
+        <div class="stat-value">{{ reviews.length }}</div>
+        <div class="stat-label">Reviews</div>
       </div>
     </div>
 
@@ -97,13 +89,38 @@
       <div class="section-block">
         <h2>✅ Minha Wishlist</h2>
         @if (wishlist.length === 0) {
-          <p class="empty-msg">A tua lista de desejos está vazia de momento.</p>
+          <p class="empty-msg">A tua lista de desejos está vazia.</p>
         } @else {
           <div class="mini-game-grid">
             @for (game of wishlist; track game.game_id) {
               <div class="mini-card" (click)="goToGame(game.game_id)" (keyup.enter)="goToGame(game.game_id)" tabindex="0" role="button">
                 <img [src]="game.game_image" [alt]="game.game_name" />
                 <p>{{ game.game_name }}</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="section-block">
+        <h2>✏️ As Minhas Reviews</h2>
+        @if (reviews.length === 0) {
+          <p class="empty-msg">Ainda não escreveste nenhuma review.</p>
+        } @else {
+          <div class="reviews-list">
+            @for (review of reviews; track review.game_id) {
+              <div class="review-card" (click)="goToGame(review.game_id)" (keyup.enter)="goToGame(review.game_id)" tabindex="0" role="button">
+                <div class="review-header">
+                  <strong>{{ review.game_name }}</strong>
+                  <span class="review-stars">
+                    @for (star of [1,2,3,4,5]; track star) {
+                      <span [class.lit]="star <= review.rating">★</span>
+                    }
+                  </span>
+                </div>
+                @if (review.comment) {
+                  <p class="review-comment">{{ review.comment }}</p>
+                }
               </div>
             }
           </div>
