@@ -15,12 +15,17 @@ export class AppComponent implements OnInit {
 
   isLoggedIn = false;
   username: string | null = null;
+  avatarUrl: string | null = null;
   isDarkMode = false;
 
   ngOnInit(): void {
     this.authService.username$.subscribe(username => {
       this.isLoggedIn = !!username;
       this.username = username;
+    });
+
+    this.authService.avatar$.subscribe(avatar => {
+      this.avatarUrl = avatar;
     });
 
     const saved = localStorage.getItem('darkMode');

@@ -2,9 +2,8 @@
 
 ## Group Members
 
-- Student 1:
-- Student 2:
-- Student 3 (if applicable):
+- Student 1: Rodrigo Fernandes Malheiro
+
 
 ## Project Theme
 

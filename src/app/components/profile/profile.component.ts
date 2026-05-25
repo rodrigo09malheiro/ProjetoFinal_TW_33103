@@ -100,25 +100,25 @@ export class ProfileComponent implements OnInit {
   }
 
   saveProfile(): void {
-    this.messageSuccess = '';
-    this.messageError = '';
+  this.messageSuccess = '';
+  this.messageError = '';
 
-    if (this.selectedFile) {
-      this.authService.uploadAvatar(this.selectedFile).subscribe({
-        next: (res) => {
-          this.avatarUrl = res.avatarUrl;
-          this.selectedFile = null;
-          this.previewUrl = null;
-          this.updateUsername();
-        },
-        error: (err) => {
-          this.messageError = err.error?.error || 'Erro ao carregar a imagem.';
-        }
-      });
-    } else {
-      this.updateUsername();
-    }
+  if (this.selectedFile) {
+    this.authService.uploadAvatar(this.selectedFile).subscribe({
+      next: (res) => {
+        this.avatarUrl = this.baseUrl + res.avatarUrl;
+        this.selectedFile = null;
+        this.previewUrl = null;
+        this.updateUsername();
+      },
+      error: (err) => {
+        this.messageError = err.error?.error || 'Erro ao carregar a imagem.';
+      }
+    });
+  } else {
+    this.updateUsername();
   }
+}
 
   private updateUsername(): void {
     this.authService.updateProfile({ username: this.editUsername }).subscribe({

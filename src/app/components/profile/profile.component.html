@@ -8,7 +8,7 @@
       <div class="profile-header">
         <div class="avatar-container">
           @if (avatarUrl) {
-            <img [src]="baseUrl + avatarUrl" alt="Avatar" class="profile-avatar" />
+            <img [src]="avatarUrl" alt="Avatar" class="profile-avatar" />
           } @else {
             <div class="avatar-placeholder">👤</div>
           }
@@ -27,7 +27,7 @@
             @if (previewUrl) {
               <img [src]="previewUrl" alt="Preview" class="profile-avatar" />
             } @else if (avatarUrl) {
-              <img [src]="baseUrl + avatarUrl" alt="Avatar Atual" class="profile-avatar" />
+              <img [src]="avatarUrl" alt="Avatar Atual" class="profile-avatar" />
             } @else {
               <div class="avatar-placeholder">👤</div>
             }

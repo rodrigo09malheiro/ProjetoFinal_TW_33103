@@ -38,6 +38,9 @@
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .nav-links button:hover {
@@ -64,4 +67,12 @@
 .nav-user {
   color: var(--primary) !important;
   font-weight: 600 !important;
+}
+
+.nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
 }
