@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, switchMap, map } from 'rxjs/operators';
 
 interface AuthResponse {
   token: string;
@@ -42,8 +42,23 @@ export class AuthService {
       tap((res) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('username', res.username);
+        // Limpa o avatar anterior para garantir que não fica o de outra conta
+        localStorage.removeItem('avatar');
+        this.avatarSubject.next(null);
         this.usernameSubject.next(res.username);
-      })
+      }),
+      switchMap(() => this.getProfile()),
+      tap((profile) => {
+        if (profile.avatar) {
+          const fullUrl = this.baseUrl + profile.avatar;
+          localStorage.setItem('avatar', fullUrl);
+          this.avatarSubject.next(fullUrl);
+        }
+      }),
+      map(() => ({
+        token: this.getToken()!,
+        username: this.getUsername()!
+      }))
     );
   }
 
