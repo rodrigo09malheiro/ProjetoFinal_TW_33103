@@ -23,7 +23,7 @@ export class AuthService {
   private apiUrl = 'http://localhost:3000/api';
   private baseUrl = 'http://localhost:3000';
 
-  private usernameSubject = new BehaviorSubject<string | null>(this.getUsername());
+  private usernameSubject = new BehaviorSubject<string | null>(this.getToken() ? this.getUsername() : null);
   username$ = this.usernameSubject.asObservable();
 
   private avatarSubject = new BehaviorSubject<string | null>(this.getAvatar());
