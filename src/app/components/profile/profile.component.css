@@ -1,3 +1,104 @@
+/* Toast */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #155724;
+  color: white;
+  padding: 14px 22px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 15px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+.toast.visible { opacity: 1; transform: translateY(0); }
+.toast.toast-error { background: #721c24; }
+
+/* Modal de Crop */
+.crop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.crop-modal {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 30px;
+  width: 360px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.crop-modal h3 {
+  margin: 0 0 6px 0;
+  font-size: 20px;
+}
+
+.crop-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 20px 0;
+}
+
+.crop-viewport {
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 20px auto;
+  cursor: grab;
+  position: relative;
+}
+
+.crop-viewport.dragging { cursor: grabbing; }
+
+.crop-circle-mask {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--primary);
+  position: relative;
+  background: #000;
+}
+
+.crop-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  transform-origin: center center;
+  transition: transform 0.05s;
+}
+
+.crop-zoom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.crop-zoom input[type="range"] {
+  width: 160px;
+  accent-color: var(--primary);
+}
+
+.crop-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* Perfil */
 .profile-container {
   max-width: 1000px;
   margin: 0 auto;
@@ -17,7 +118,6 @@
   margin-bottom: 40px;
 }
 
-/* Tratamento do Avatar Redondo */
 .avatar-container {
   width: 110px;
   height: 110px;
@@ -38,16 +138,7 @@
   object-fit: cover;
 }
 
-.avatar-placeholder {
-  font-size: 55px;
-  line-height: 1;
-}
-
-.email-sub {
-  color: var(--text-muted);
-  margin: 4px 0 15px 0;
-  font-size: 15px;
-}
+.avatar-placeholder { font-size: 55px; line-height: 1; }
 
 .btn-edit-toggle {
   background: var(--bg-card);
@@ -59,13 +150,8 @@
   font-weight: bold;
   transition: all 0.2s ease;
 }
+.btn-edit-toggle:hover { background: var(--primary); color: white; }
 
-.btn-edit-toggle:hover {
-  background: var(--primary);
-  color: white;
-}
-
-/* Formulário de Edição Estilizado */
 .edit-profile-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -74,21 +160,11 @@
   margin-bottom: 40px;
   box-shadow: var(--shadow);
 }
+.edit-profile-card h2 { margin-top: 0; margin-bottom: 25px; text-align: center; }
 
-.edit-profile-card h2 {
-  margin-top: 0;
-  margin-bottom: 25px;
-  text-align: center;
-}
+.edit-avatar-section { text-align: center; margin-bottom: 25px; }
 
-.edit-avatar-section {
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-input[type="file"] {
-  display: none;
-}
+input[type="file"] { display: none; }
 
 .btn-file-label {
   display: inline-block;
@@ -101,31 +177,16 @@ input[type="file"] {
   margin-top: 10px;
   transition: background 0.2s;
 }
-
-.btn-file-label:hover {
-  background: var(--primary);
-  color: white;
-}
-
-.edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  max-width: 500px;
-  margin: 0 auto;
-}
+.btn-file-label:hover { background: var(--primary); color: white; }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-width: 400px;
+  margin: 0 auto 15px auto;
 }
-
-.form-group label {
-  font-size: 14px;
-  font-weight: bold;
-}
-
+.form-group label { font-size: 14px; font-weight: bold; }
 .form-group input {
   padding: 10px;
   background: var(--bg);
@@ -140,6 +201,9 @@ input[type="file"] {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 15px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .btn-submit {
@@ -151,7 +215,6 @@ input[type="file"] {
   font-weight: bold;
   cursor: pointer;
 }
-
 .btn-cancel {
   padding: 10px 20px;
   background: transparent;
@@ -161,27 +224,12 @@ input[type="file"] {
   cursor: pointer;
 }
 
-/* Alertas de Feedback */
-.alert {
-  padding: 12px;
-  border-radius: 8px;
-  margin: 15px auto;
-  max-width: 500px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.alert-success { background: #d4edda; color: #155724; }
-.alert-danger { background: #f8d7da; color: #721c24; }
-
-/* Grelhas de Estatísticas e Jogos (Mantidos) */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   margin-bottom: 50px;
 }
-
 .stat-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -190,7 +238,6 @@ input[type="file"] {
   text-align: center;
   box-shadow: var(--shadow);
 }
-
 .stat-card .icon { font-size: 32px; display: block; margin-bottom: 8px; }
 .stat-card .stat-value { font-size: 28px; font-weight: bold; color: var(--primary); }
 .stat-card .stat-label { font-size: 14px; color: var(--text-muted); }
@@ -204,7 +251,6 @@ input[type="file"] {
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 15px;
 }
-
 .mini-card {
   background: var(--bg-card);
   border-radius: 8px;
@@ -214,19 +260,14 @@ input[type="file"] {
   transition: transform 0.2s ease;
   text-align: center;
 }
-
 .mini-card:hover { transform: scale(1.04); }
 .mini-card img { width: 100%; height: 95px; object-fit: cover; }
 .mini-card p {
   margin: 8px; font-size: 12px; font-weight: bold; color: var(--text);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.reviews-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
 
+.reviews-list { display: flex; flex-direction: column; gap: 12px; }
 .review-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -236,30 +277,8 @@ input[type="file"] {
   transition: transform 0.2s;
   box-shadow: var(--shadow);
 }
-
-.review-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--primary);
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.review-stars span {
-  color: var(--border);
-  font-size: 18px;
-}
-
-.review-stars span.lit {
-  color: #fbbf24;
-}
-
-.review-comment {
-  color: var(--text-muted);
-  font-size: 14px;
-  margin: 0;
-}
+.review-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+.review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.review-stars span { color: var(--border); font-size: 18px; }
+.review-stars span.lit { color: #fbbf24; }
+.review-comment { color: var(--text-muted); font-size: 14px; margin: 0; }

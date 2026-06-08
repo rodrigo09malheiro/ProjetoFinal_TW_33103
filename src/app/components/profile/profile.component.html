@@ -1,3 +1,40 @@
+<!-- Toast — FORA de qualquer @if -->
+<div class="toast" [class.visible]="toastVisible" [class.toast-error]="toastType === 'error'">
+  {{ toastMessage }}
+</div>
+
+<!-- Modal de Crop -->
+@if (showCropModal) {
+  <div class="crop-overlay" (mousemove)="onCropDragMove($event)" (mouseup)="onCropDragEnd()" (mouseleave)="onCropDragEnd()">
+    <div class="crop-modal">
+      <h3>✂️ Ajustar Foto</h3>
+      <p class="crop-hint">Arrasta para reposicionar · Usa o slider para dar zoom</p>
+
+      <div class="crop-viewport" (mousedown)="onCropDragStart($event)" [class.dragging]="isDragging">
+        <div class="crop-circle-mask">
+          <img
+            [src]="cropImageSrc"
+            alt="Crop preview"
+            class="crop-image"
+            [style.transform]="'scale(' + cropScale + ') translate(' + cropOffsetX / cropScale + 'px, ' + cropOffsetY / cropScale + 'px)'"
+          />
+        </div>
+      </div>
+
+      <div class="crop-zoom">
+        <span>🔍−</span>
+        <input type="range" min="0.5" max="3" step="0.05" [(ngModel)]="cropScale" />
+        <span>🔍+</span>
+      </div>
+
+      <div class="crop-actions">
+        <button class="btn-cancel" (click)="closeCropModal()">Cancelar</button>
+        <button class="btn-submit" (click)="confirmCrop()">✅ Confirmar</button>
+      </div>
+    </div>
+  </div>
+}
+
 <div class="profile-container">
   @if (isLoading) {
     <div class="loading">A carregar...</div>
@@ -24,15 +61,13 @@
 
         <div class="edit-avatar-section">
           <div class="avatar-container">
-            @if (previewUrl) {
-              <img [src]="previewUrl" alt="Preview" class="profile-avatar" />
-            } @else if (avatarUrl) {
+            @if (avatarUrl) {
               <img [src]="avatarUrl" alt="Avatar Atual" class="profile-avatar" />
             } @else {
               <div class="avatar-placeholder">👤</div>
             }
           </div>
-          <label for="file-upload" class="btn-file-label">📷 Escolher Imagem</label>
+          <label for="file-upload" class="btn-file-label">📷 Alterar Foto</label>
           <input id="file-upload" type="file" (change)="onFileSelected($event)" accept="image/*" />
         </div>
 
@@ -47,9 +82,6 @@
         </div>
       </div>
     }
-
-    @if (messageSuccess) { <div class="alert alert-success">{{ messageSuccess }}</div> }
-    @if (messageError) { <div class="alert alert-danger">{{ messageError }}</div> }
 
     <div class="stats-grid">
       <div class="stat-card">
@@ -113,7 +145,7 @@
                 <div class="review-header">
                   <strong>{{ review.game_name }}</strong>
                   <span class="review-stars">
-                    @for (star of [1,2,3,4,5]; track star) {
+                    @for (star of starsArray; track star) {
                       <span [class.lit]="star <= review.rating">★</span>
                     }
                   </span>
