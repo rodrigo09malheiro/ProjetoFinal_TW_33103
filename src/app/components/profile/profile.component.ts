@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserDataService } from '../../services/user-data.service';
+import { environment } from '../../../environments/environment';
 
 interface SavedGame {
   game_id: number;
@@ -65,7 +66,7 @@ export class ProfileComponent implements OnInit {
 
   starsArray = [1, 2, 3, 4, 5];
 
-  baseUrl = 'http://localhost:3000/';
+  baseUrl = environment.baseUrl + '/';
 
   ngOnInit(): void {
     this.authService.username$.subscribe(user => {

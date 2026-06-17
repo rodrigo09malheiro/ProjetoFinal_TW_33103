@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap, switchMap, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 interface AuthResponse {
   token: string;
@@ -20,8 +21,8 @@ interface ProfileResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api';
-  private baseUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
+  private baseUrl = environment.baseUrl;
 
   private usernameSubject = new BehaviorSubject<string | null>(this.getToken() ? this.getUsername() : null);
   username$ = this.usernameSubject.asObservable();
