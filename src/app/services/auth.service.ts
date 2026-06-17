@@ -12,7 +12,7 @@ interface ProfileResponse {
   id: number;
   username: string;
   email: string;
-  avatar: string | null;
+  avatar_url: string | null;
 }
 
 @Injectable({
@@ -42,15 +42,14 @@ export class AuthService {
       tap((res) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('username', res.username);
-        // Limpa o avatar anterior para garantir que não fica o de outra conta
         localStorage.removeItem('avatar');
         this.avatarSubject.next(null);
         this.usernameSubject.next(res.username);
       }),
       switchMap(() => this.getProfile()),
       tap((profile) => {
-        if (profile.avatar) {
-          const fullUrl = this.baseUrl + profile.avatar;
+        if (profile.avatar_url) {
+          const fullUrl = this.baseUrl + profile.avatar_url;
           localStorage.setItem('avatar', fullUrl);
           this.avatarSubject.next(fullUrl);
         }
@@ -74,8 +73,8 @@ export class AuthService {
     return this.http.get<ProfileResponse>(`${this.apiUrl}/profile`, { headers: this.getHeaders() });
   }
 
-  updateProfile(data: { username?: string; email?: string; password?: string }): Observable<{ message: string; username: string }> {
-    return this.http.put<{ message: string; username: string }>(`${this.apiUrl}/profile`, data, { headers: this.getHeaders() }).pipe(
+  updateProfile(data: { username?: string; email?: string; password?: string }): Observable<{ message: string; username: string; avatarUrl?: string }> {
+    return this.http.put<{ message: string; username: string; avatarUrl?: string }>(`${this.apiUrl}/profile`, data, { headers: this.getHeaders() }).pipe(
       tap((res) => {
         localStorage.setItem('username', res.username);
         this.usernameSubject.next(res.username);
@@ -83,10 +82,10 @@ export class AuthService {
     );
   }
 
-  uploadAvatar(file: File): Observable<{ avatarUrl: string }> {
+  uploadAvatar(file: File): Observable<{ avatarUrl: string; username?: string }> {
     const formData = new FormData();
     formData.append('avatar', file);
-    return this.http.post<{ avatarUrl: string }>(`${this.apiUrl}/profile/avatar`, formData, { headers: new HttpHeaders({ Authorization: `Bearer ${this.getToken()}` }) }).pipe(
+    return this.http.put<{ avatarUrl: string; username?: string }>(`${this.apiUrl}/profile`, formData, { headers: new HttpHeaders({ Authorization: `Bearer ${this.getToken()}` }) }).pipe(
       tap((res) => {
         const fullUrl = this.baseUrl + res.avatarUrl;
         localStorage.setItem('avatar', fullUrl);
