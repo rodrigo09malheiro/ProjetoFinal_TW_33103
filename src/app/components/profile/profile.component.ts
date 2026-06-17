@@ -17,6 +17,8 @@ interface UserReview {
   game_name: string;
   rating: number;
   comment: string;
+  username?: string;
+  avatar_url?: string;
 }
 
 @Component({
@@ -62,7 +64,7 @@ export class ProfileComponent implements OnInit {
 
   starsArray = [1, 2, 3, 4, 5];
 
-  baseUrl = 'http://localhost:3000';
+  baseUrl = 'http://localhost:3000/';
 
   ngOnInit(): void {
     this.authService.username$.subscribe(user => {
@@ -79,10 +81,11 @@ export class ProfileComponent implements OnInit {
 
   loadProfileData(): void {
     this.isLoading = true;
-    this.userDataService.getFavorites().subscribe({ next: (favs) => { this.favorites = favs as SavedGame[]; } });
-    this.userDataService.getWishlist().subscribe({ next: (wish) => { this.wishlist = wish as SavedGame[]; } });
+    // RESOLVIDO: Usar "unknown" em vez de "any"
+    this.userDataService.getFavorites().subscribe({ next: (favs) => { this.favorites = favs as unknown as SavedGame[]; } });
+    this.userDataService.getWishlist().subscribe({ next: (wish) => { this.wishlist = wish as unknown as SavedGame[]; } });
     this.userDataService.getReviews().subscribe({
-      next: (revs) => { this.reviews = revs as UserReview[]; this.isLoading = false; },
+      next: (revs) => { this.reviews = revs as unknown as UserReview[]; this.isLoading = false; },
       error: () => { this.isLoading = false; }
     });
   }
@@ -153,17 +156,13 @@ export class ProfileComponent implements OnInit {
       ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
       ctx.clip();
 
-      // A imagem no viewport é renderizada com object-fit: cover a 220px
-      // Calculamos a escala base para cobrir o viewport
       const scaleToFit = Math.max(viewportSize / img.width, viewportSize / img.height);
       const baseW = img.width * scaleToFit;
       const baseH = img.height * scaleToFit;
 
-      // Aplicar o zoom do utilizador
       const scaledW = baseW * this.cropScale;
       const scaledH = baseH * this.cropScale;
 
-      // Offset base para centrar + offset do drag, escalado para o canvas de output
       const ratio = outputSize / viewportSize;
       const centerX = (outputSize - scaledW * ratio) / 2 + this.cropOffsetX * ratio;
       const centerY = (outputSize - scaledH * ratio) / 2 + this.cropOffsetY * ratio;
@@ -182,12 +181,28 @@ export class ProfileComponent implements OnInit {
   }
 
   private uploadAvatar(file: File): void {
-    this.authService.uploadAvatar(file).subscribe({
-      next: () => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    this.userDataService.updateProfile(formData).subscribe({
+      // RESOLVIDO: Declarar o "res" como unknown e mapear para a variável certa
+      next: (res: unknown) => {
+        const response = res as { avatarUrl: string };
+        this.avatarUrl = response.avatarUrl;
+        
+        // Atualizar o LocalStorage para a Navbar detetar a nova foto
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const userObj = JSON.parse(userStr);
+          userObj.avatarUrl = response.avatarUrl;
+          localStorage.setItem('user', JSON.stringify(userObj));
+        }
+
         this.showToast('Foto atualizada com sucesso!', 'success');
+        setTimeout(() => window.location.reload(), 1000); // Força a navbar a atualizar
       },
       error: (err) => {
-        this.showToast(err.error?.error || 'Erro ao carregar a imagem.', 'error');
+        this.showToast(err.error?.message || 'Erro ao carregar a imagem.', 'error');
       }
     });
   }
@@ -197,14 +212,29 @@ export class ProfileComponent implements OnInit {
   }
 
   private saveUsername(): void {
-    this.authService.updateProfile({ username: this.editUsername }).subscribe({
-      next: (res) => {
-        this.username = res.username;
+    if (!this.editUsername || this.editUsername.trim() === '') return;
+
+    const formData = new FormData();
+    formData.append('username', this.editUsername);
+
+    this.userDataService.updateProfile(formData).subscribe({
+      next: () => {
+        this.username = this.editUsername;
         this.isEditing = false;
+
+        // Atualizar o LocalStorage para a Navbar detetar o novo nome
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const userObj = JSON.parse(userStr);
+          userObj.username = this.editUsername;
+          localStorage.setItem('user', JSON.stringify(userObj));
+        }
+
         this.showToast('Perfil atualizado com sucesso!', 'success');
+        setTimeout(() => window.location.reload(), 1000); // Força a navbar a atualizar
       },
       error: (err) => {
-        this.showToast(err.error?.error || 'Erro ao atualizar o perfil.', 'error');
+        this.showToast(err.error?.message || 'Erro ao atualizar o perfil.', 'error');
       }
     });
   }

@@ -90,12 +90,14 @@ export class GameDetailComponent implements OnInit {
   checkUserData(): void {
     this.userDataService.getFavorites().subscribe({
       next: (favorites) => {
-        this.isFavorite = favorites.some(f => f.game_id === this.game?.id);
+        // CORREÇÃO: Usar gameId (camelCase)
+        this.isFavorite = favorites.some(f => f.gameId === this.game?.id);
       }
     });
     this.userDataService.getWishlist().subscribe({
       next: (wishlist) => {
-        this.isInWishlist = wishlist.some(w => w.game_id === this.game?.id);
+        // CORREÇÃO: Usar gameId (camelCase)
+        this.isInWishlist = wishlist.some(w => w.gameId === this.game?.id);
       }
     });
   }
@@ -107,11 +109,12 @@ export class GameDetailComponent implements OnInit {
         next: () => { this.isFavorite = false; }
       });
     } else {
+      // CORREÇÃO: Enviar propriedades em camelCase!
       this.userDataService.addFavorite({
-        game_id: this.game.id,
-        game_name: this.game.name,
-        game_image: this.game.background_image,
-        game_rating: this.game.rating
+        gameId: this.game.id,
+        gameName: this.game.name,
+        gameImage: this.game.background_image,
+        gameRating: this.game.rating
       }).subscribe({
         next: () => { this.isFavorite = true; }
       });
@@ -125,11 +128,12 @@ export class GameDetailComponent implements OnInit {
         next: () => { this.isInWishlist = false; }
       });
     } else {
+      // CORREÇÃO: Enviar propriedades em camelCase!
       this.userDataService.addToWishlist({
-        game_id: this.game.id,
-        game_name: this.game.name,
-        game_image: this.game.background_image,
-        game_rating: this.game.rating
+        gameId: this.game.id,
+        gameName: this.game.name,
+        gameImage: this.game.background_image,
+        gameRating: this.game.rating
       }).subscribe({
         next: () => { this.isInWishlist = true; }
       });
@@ -138,9 +142,9 @@ export class GameDetailComponent implements OnInit {
 
   submitReview(): void {
     if (!this.game || !this.reviewRating) return;
+    // CORREÇÃO: O serviço só espera gameId, rating e comment para as reviews
     this.userDataService.addReview({
-      game_id: this.game.id,
-      game_name: this.game.name,
+      gameId: this.game.id,
       rating: this.reviewRating,
       comment: this.reviewComment
     }).subscribe({

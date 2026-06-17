@@ -14,11 +14,14 @@ export class AppComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
 
+  // Variável obrigatória para o 'npm run quality' não chumbar no frontend
+  title = 'webtech-final-project-frontend-template';
+
   isLoggedIn = false;
   username: string | null = null;
   avatarUrl: string | null = null;
   isDarkMode = false;
-  showNavbar = false;
+  showNavbar = true; // 1. Garante que começa sempre visível!
 
   private readonly authRoutes = ['/login', '/register'];
 
@@ -26,7 +29,8 @@ export class AppComponent implements OnInit {
     this.authService.username$.subscribe(username => {
       this.isLoggedIn = !!username;
       this.username = username;
-      this.updateNavbarVisibility(this.router.url);
+      // Não precisamos de forçar a atualização da navbar aqui,
+      // a subscrição das rotas abaixo já trata disso perfeitamente.
     });
 
     this.authService.avatar$.subscribe(avatar => {
@@ -48,8 +52,12 @@ export class AppComponent implements OnInit {
   }
 
   private updateNavbarVisibility(url: string): void {
-    const isAuthPage = this.authRoutes.some(route => url.startsWith(route));
-    this.showNavbar = this.isLoggedIn && !isAuthPage;
+    // 2. Verifica se a página atual tem '/login' ou '/register' no URL
+    const isAuthPage = this.authRoutes.some(route => url.includes(route));
+    
+    // 3. A navbar deve aparecer SEMPRE, exceto nessas duas páginas.
+    // Assim, quem não tem login consegue ver a navbar para poder clicar em "Entrar".
+    this.showNavbar = !isAuthPage;
   }
 
   toggleDarkMode(): void {
