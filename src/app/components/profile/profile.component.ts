@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ElementRef, ViewChild, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -34,6 +34,7 @@ export class ProfileComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private userDataService = inject(UserDataService);
+  private ngZone = inject(NgZone);
 
   username: string | null = null;
   avatarUrl: string | null = null;
@@ -81,7 +82,6 @@ export class ProfileComponent implements OnInit {
 
   loadProfileData(): void {
     this.isLoading = true;
-    // RESOLVIDO: Usar "unknown" em vez de "any"
     this.userDataService.getFavorites().subscribe({ next: (favs) => { this.favorites = favs as unknown as SavedGame[]; } });
     this.userDataService.getWishlist().subscribe({ next: (wish) => { this.wishlist = wish as unknown as SavedGame[]; } });
     this.userDataService.getReviews().subscribe({
@@ -173,36 +173,22 @@ export class ProfileComponent implements OnInit {
       canvas.toBlob((blob) => {
         if (!blob) return;
         const croppedFile = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
-        this.showCropModal = false;
-        this.uploadAvatar(croppedFile);
+        this.ngZone.run(() => {
+          this.showCropModal = false;
+          this.uploadAvatar(croppedFile);
+        });
       }, 'image/jpeg', 0.92);
     };
     img.src = this.cropImageSrc;
   }
 
   private uploadAvatar(file: File): void {
-    const formData = new FormData();
-    formData.append('avatar', file);
-
-    this.userDataService.updateProfile(formData).subscribe({
-      // RESOLVIDO: Declarar o "res" como unknown e mapear para a variável certa
-      next: (res: unknown) => {
-        const response = res as { avatarUrl: string };
-        this.avatarUrl = response.avatarUrl;
-        
-        // Atualizar o LocalStorage para a Navbar detetar a nova foto
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-          const userObj = JSON.parse(userStr);
-          userObj.avatarUrl = response.avatarUrl;
-          localStorage.setItem('user', JSON.stringify(userObj));
-        }
-
+    this.authService.uploadAvatar(file).subscribe({
+      next: () => {
         this.showToast('Foto atualizada com sucesso!', 'success');
-        setTimeout(() => window.location.reload(), 1000); // Força a navbar a atualizar
       },
       error: (err) => {
-        this.showToast(err.error?.message || 'Erro ao carregar a imagem.', 'error');
+        this.showToast(err.error?.message || err.error?.error || 'Erro ao carregar a imagem.', 'error');
       }
     });
   }
@@ -214,27 +200,13 @@ export class ProfileComponent implements OnInit {
   private saveUsername(): void {
     if (!this.editUsername || this.editUsername.trim() === '') return;
 
-    const formData = new FormData();
-    formData.append('username', this.editUsername);
-
-    this.userDataService.updateProfile(formData).subscribe({
+    this.authService.updateProfile({ username: this.editUsername }).subscribe({
       next: () => {
-        this.username = this.editUsername;
         this.isEditing = false;
-
-        // Atualizar o LocalStorage para a Navbar detetar o novo nome
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-          const userObj = JSON.parse(userStr);
-          userObj.username = this.editUsername;
-          localStorage.setItem('user', JSON.stringify(userObj));
-        }
-
         this.showToast('Perfil atualizado com sucesso!', 'success');
-        setTimeout(() => window.location.reload(), 1000); // Força a navbar a atualizar
       },
       error: (err) => {
-        this.showToast(err.error?.message || 'Erro ao atualizar o perfil.', 'error');
+        this.showToast(err.error?.message || err.error?.error || 'Erro ao atualizar o perfil.', 'error');
       }
     });
   }

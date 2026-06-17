@@ -141,19 +141,25 @@ export class GameDetailComponent implements OnInit {
   }
 
   submitReview(): void {
-    if (!this.game || !this.reviewRating) return;
-    // CORREÇÃO: O serviço só espera gameId, rating e comment para as reviews
-    this.userDataService.addReview({
-      gameId: this.game.id,
-      rating: this.reviewRating,
-      comment: this.reviewComment
-    }).subscribe({
-      next: () => {
-        this.successMessage = 'Review guardada!';
-        this.showReviewForm = false;
-      }
-    });
-  }
+  if (!this.game || !this.reviewRating) return;
+  this.userDataService.addReview({
+    gameId: this.game.id,
+    gameName: this.game.name,
+    rating: this.reviewRating,
+    comment: this.reviewComment
+  }).subscribe({
+    next: () => {
+      this.successMessage = 'Review guardada!';
+      this.showReviewForm = false;
+      this.reviewRating = 0;
+      this.reviewComment = '';
+    },
+    error: (err) => {
+      this.successMessage = '';
+      console.error('Erro ao guardar review:', err);
+    }
+  });
+}
 
   openScreenshot(image: string): void {
     this.selectedScreenshot = image;
