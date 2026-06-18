@@ -47,7 +47,9 @@
       />
     </div>
 
-    <button class="btn-primary" (click)="onRegister()">Registar</button>
+    <button class="btn-primary" (click)="onRegister()" [disabled]="isLoading">
+      {{ isLoading ? 'A registar...' : 'Registar' }}
+    </button>
 
     <p class="switch">
       Já tens conta?

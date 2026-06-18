@@ -27,7 +27,9 @@
       />
     </div>
 
-    <button class="btn-primary" (click)="onLogin()">Entrar</button>
+    <button class="btn-primary" (click)="onLogin()" [disabled]="isLoading">
+      {{ isLoading ? 'A entrar...' : 'Entrar' }}
+    </button>
 
     <p class="switch">
       Não tens conta?

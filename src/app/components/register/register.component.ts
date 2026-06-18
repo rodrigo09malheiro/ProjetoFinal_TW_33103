@@ -40,7 +40,7 @@ export class RegisterComponent {
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        this.errorMessage = err.error?.error || 'Erro ao registar.';
+        this.errorMessage = err.error?.message || err.error?.error || 'Erro ao registar.';
         this.isLoading = false;
       }
     });

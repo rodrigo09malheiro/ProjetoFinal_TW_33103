@@ -34,7 +34,7 @@ export class LoginComponent {
         this.router.navigate(['/games']);
       },
       error: (err) => {
-        this.errorMessage = err.error?.error || 'Erro ao fazer login.';
+        this.errorMessage = err.error?.message || err.error?.error || 'Erro ao fazer login.';
         this.isLoading = false;
       }
     });
