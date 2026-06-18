@@ -75,4 +75,22 @@ You can edit:
 
 ### Project Notes
 
-Add your project-specific notes here.
+**GameDex** — aplicação Angular para gerir um catálogo pessoal de jogos, usando a RAWG API como fonte de dados externa.
+
+**Funcionalidades implementadas**
+
+- Autenticação (login/registo) com validação de campos e feedback de erros vindos do backend
+- Perfil de utilizador: edição de username, upload e recorte (crop) de avatar
+- Favoritos: adicionar, remover e listar jogos favoritos
+- Wishlist: adicionar, remover e listar jogos na wishlist
+- Reviews: criar review (rating + comentário) num jogo, e listar reviews do utilizador e por jogo
+- Listagem de jogos com filtros por género e plataforma
+- Página de detalhe do jogo com ações para adicionar a favoritos, wishlist e publicar review
+
+**Integração externa**
+
+A RAWG API é consumida no `RawgService` para listagem, pesquisa, filtros e detalhe dos jogos.
+
+**Comunicação com o backend**
+
+Feita através de `UserDataService` e `AuthService`, com o token JWT enviado no header `Authorization` em todos os pedidos autenticados.
