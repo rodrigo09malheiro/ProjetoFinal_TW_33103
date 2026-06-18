@@ -7,15 +7,15 @@ import { UserDataService } from '../../services/user-data.service';
 import { environment } from '../../../environments/environment';
 
 interface SavedGame {
-  game_id: number;
-  game_name: string;
-  game_image: string;
-  game_rating: number;
+  gameId: number;
+  gameName: string;
+  gameImage: string;
+  gameRating?: number;
 }
 
 interface UserReview {
-  game_id: number;
-  game_name: string;
+  gameId: number;
+  gameName: string;
   rating: number;
   comment: string;
   username?: string;
