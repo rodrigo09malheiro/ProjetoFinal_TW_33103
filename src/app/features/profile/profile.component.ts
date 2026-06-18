@@ -2,8 +2,8 @@ import { Component, inject, OnInit, ElementRef, ViewChild, NgZone } from '@angul
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { UserDataService } from '../../services/user-data.service';
+import { AuthService } from '../../core/services/auth.service';
+import { UserDataService } from '../../core/services/user-data.service';
 import { environment } from '../../../environments/environment';
 
 interface SavedGame {

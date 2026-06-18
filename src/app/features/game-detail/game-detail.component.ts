@@ -2,10 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RawgService } from '../../services/rawg.service';
-import { UserDataService, Review } from '../../services/user-data.service';
-import { AuthService } from '../../services/auth.service';
-
+import { RawgService } from '../../core/services/rawg.service';
+import { UserDataService, Review } from '../../core/services/user-data.service';
+import { AuthService } from '../../core/services/auth.service';
 interface GameDetail {
   id: number;
   name: string;

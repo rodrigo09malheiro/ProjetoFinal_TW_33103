@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RawgService } from '../../services/rawg.service';
+import { RawgService } from '../../core/services/rawg.service';
 
 interface Game {
   id: number;

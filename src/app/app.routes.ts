@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { GameListComponent } from './components/game-list/game-list.component';
-import { GameDetailComponent } from './components/game-detail/game-detail.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { ProfileComponent } from './components/profile/profile.component';
-import { NotFoundComponent } from './components/not-found/not-found.component';
 import { authGuard } from './guards/auth.guard';
+import { GameListComponent } from './features/game-list/game-list.component';
+import { GameDetailComponent } from './features/game-detail/game-detail.component';
+import { LoginComponent } from './features/login/login.component';
+import { RegisterComponent } from './features/register/register.component';
+import { ProfileComponent } from './features/profile/profile.component';
+import { NotFoundComponent } from './shared/not-found/not-found.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },

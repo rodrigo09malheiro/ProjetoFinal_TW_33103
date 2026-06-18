@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Technologias Web — Grupo (Tema)</title>
+    <style>
+  :root {
+    --bg: #0b1020;
+    --text: #e5e7eb;
+    --muted: #a8b0c2;
+    --line: rgba(255,255,255,0.08);
+    --shadow: 0 12px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji";
+    background: radial-gradient(1200px 700px at 20% 0%, rgba(56,189,248,.18), transparent 55%),
+                radial-gradient(1200px 700px at 90% 10%, rgba(34,197,94,.14), transparent 60%),
+                var(--bg);
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .container { max-width: 980px; margin: 28px auto; padding: 0 18px 28px; }
+  .mock-banner {
+    background: rgba(245,158,11,.15);
+    border: 1px solid rgba(245,158,11,.3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    color: #fde68a;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .header {
+    display:flex;
+    gap:16px;
+    align-items:stretch;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+
+  .title, .summary {
+    min-height: 200px;
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow: var(--shadow);
+  }
+
+  .title {
+    position: relative;
+    padding:18px;
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    flex:1 1 520px;
+    min-width:320px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:14px;
+  }
+
+  .kicker {
+    color: var(--muted);
+    font-weight:800;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+    font-size:12px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  .epoca-pill {
+    position:absolute;
+    top:16px;
+    right:16px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:6px 10px;
+    background: rgba(255,255,255,.03);
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    color: var(--text);
+    font-weight:800;
+    font-size:12px;
+    white-space:nowrap;
+  }
+
+  .main-title {
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:2px;
+  }
+  .main-title .big {
+    margin:0;
+    font-size:34px;
+    font-weight:900;
+    line-height:1.05;
+  }
+
+  .tema {
+    margin:0;
+    font-size:18px;
+    font-weight:850;
+    color:#dbeafe;
+  }
+
+  .pill {
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 12px;
+    background: rgba(255,255,255,.03);
+    display:inline-flex;
+    gap:10px;
+    align-items:center;
+    font-weight:850;
+    color: var(--text);
+    width: fit-content;
+  }
+
+  .members {
+    margin:0;
+    padding-left: 28px;
+    list-style: disc;
+  }
+  .members li {
+    margin:8px 0;
+    padding-left: 10px;
+  }
+  .name { font-weight:700; }
+
+  .summary {
+    flex:0 0 320px;
+    min-width:320px;
+    background: rgba(15,23,42,.88);
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+
+  .sum-label {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #c7d2fe;
+    margin-bottom: 8px;
+  }
+
+  .sum-big {
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.1;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.02),
+      0 8px 18px rgba(0,0,0,.35);
+    width: fit-content;
+  }
+  .sum-big small {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--muted);
+    margin-left: 6px;
+  }
+
+  .sum-breakdown {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 16px;
+  }
+  .sum-section {
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .sum-title {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: #dbeafe;
+  }
+
+  .sum-value {
+    font-size: 20px;
+    font-weight: 900;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    width: fit-content;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.02),
+      0 6px 14px rgba(0,0,0,.28);
+  }
+  .sum-value span {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--muted);
+    margin-left: 6px;
+  }
+
+  .grade-bad  { color: #fecaca; text-shadow: 0 0 6px rgba(239,68,68,.25); }
+  .grade-ok   { color: #fde68a; text-shadow: 0 0 6px rgba(245,158,11,.25); }
+  .grade-good { color: #bbf7d0; text-shadow: 0 0 6px rgba(34,197,94,.25); }
+
+  .grid {
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:16px;
+    margin-top:16px;
+  }
+  .card {
+    border:1px solid var(--line);
+    background: rgba(15,23,42,.75);
+    border-radius:18px;
+    padding:16px;
+    box-shadow: var(--shadow);
+  }
+  .card h2 { margin:0 0 10px; font-size:16px; color: #dbeafe; }
+
+  .table-card {
+    margin-top:16px;
+    border:1px solid var(--line);
+    background: rgba(15,23,42,.8);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow: var(--shadow);
+  }
+  .table-head {
+    padding:12px 16px;
+    background: linear-gradient(90deg, rgba(56,189,248,.18), rgba(34,197,94,.12));
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .table-head .meta { color: var(--muted); font-size:12px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { padding:12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th {
+    text-align:left;
+    color:#c7d2fe;
+    font-size:12px;
+    letter-spacing:.2px;
+    text-transform:uppercase;
+  }
+  .score { font-weight:900; white-space:nowrap; }
+  .chip {
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    font-weight:750;
+    font-size:12px;
+    white-space:nowrap;
+  }
+  .chip.good  { background: rgba(34,197,94,.12);  color: #bbf7d0; }
+  .chip.bad   { background: rgba(239,68,68,.12);   color: #fecaca; }
+  .chip.muted { background: rgba(255,255,255,.04); color: var(--muted); }
+
+  .footer {
+    margin-top:18px;
+    border-top:1px solid var(--line);
+    padding-top:12px;
+    color: var(--muted);
+    font-size:12px;
+    text-align:center;
+  }
+
+  @media print {
+    body { background:white; color:#111827; }
+    .container { margin:0; max-width:none; }
+    .title, .summary, .card, .table-card { box-shadow:none !important; background:white !important; border:1px solid #e5e7eb !important; }
+    .table-head { background:#f3f4f6 !important; }
+    th { color:#111827 !important; }
+    .meta, .kicker, .footer, .sum-value span, .sum-big small { color:#4b5563 !important; }
+    .epoca-pill { background:#f3f4f6 !important; border:1px solid #e5e7eb !important; color:#111827 !important; }
+    .grade-bad  { color:#991b1b !important; text-shadow:none !important; }
+    .grade-ok   { color:#854d0e !important; text-shadow:none !important; }
+    .grade-good { color:#166534 !important; text-shadow:none !important; }
+    .chip.good  { background:#dcfce7 !important; color:#166534 !important; }
+    .chip.bad   { background:#fee2e2 !important; color:#991b1b !important; }
+    .chip.muted { background:#f3f4f6 !important; color:#4b5563 !important; }
+  }
+</style>
+  </head>
+  <body>
+    <div class="container">
+      
+
+      <div class="header">
+        <div class="title">
+          <div class="epoca-pill">📚 Época: <b>Época Normal</b></div>
+          <div>
+            <div class="kicker">TECHNOLOGIAS WEB • AVALIAÇÃO PRÁTICA</div>
+            <div class="main-title">
+              <h1 class="big">Grupo</h1>
+            </div>
+            <p class="tema">🎯 Tema: -</p>
+            <div style="margin-top:12px;">
+              <div class="pill">👥 Elementos</div>
+              <p style="color:var(--muted)">Sem dados de grupo.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div>
+            <div class="sum-label">🎯 NOTA FINAL</div>
+            <div class="sum-big grade-good">
+              20 <small>valores</small>
+            </div>
+            <div class="sum-breakdown">
+              <div class="sum-section">
+                <div class="sum-title">🧱 OBJETIVOS</div>
+                <div class="sum-value grade-good">
+                  20
+                  <span>valores / 20</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>🧠 Feedback final</h2>
+          <div style="white-space:pre-wrap;">—</div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-head">
+          <div><b>🧱 Objetivos Principais</b> <span class="meta">— (máx 20 valores)</span></div>
+          <div class="meta">❌ Não • ✅ Cumpriu • ⏭️ Não verificado</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:44%;">Critério</th>
+              <th style="width:10%;">Pontos</th>
+              <th style="width:20%;">Estado</th>
+              <th>Observações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Estrutura mínima</td>
+              <td class="score">10/10</td>
+              <td><span class="chip good">✅ Cumpriu</span></td>
+              <td>
+                <span style="color:#bbf7d0;font-size:12px;">Todos os ficheiros e pastas obrigatórios estão presentes.</span>
+                
+              </td>
+            </tr>
+            <tr>
+              <td>Lint</td>
+              <td class="score">5/5</td>
+              <td><span class="chip good">✅ Cumpriu</span></td>
+              <td>
+                <span style="color:#bbf7d0;font-size:12px;">Sem erros de lint — código segue as regras de estilo.</span>
+                <details style="margin-top:6px;"><summary style="font-size:12px;cursor:pointer;">Ver erros de lint</summary><pre style="margin:6px 0 0;font-size:11px;">&gt; webtech-final-project-frontend-template@0.0.0 lint
+&gt; ng lint
+
+
+Linting &quot;webtech-final-project-frontend-template&quot;...
+
+All files pass linting.</pre></details>
+                
+              </td>
+            </tr>
+            <tr>
+              <td>Build</td>
+              <td class="score">5/5</td>
+              <td><span class="chip good">✅ Cumpriu</span></td>
+              <td>
+                <span style="color:#bbf7d0;font-size:12px;">Projeto compila sem erros.</span>
+                
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-card">
+        <div class="table-head">
+          <div><b>📌 Informação do projeto</b></div>
+          <div class="meta">Fonte: PROJECT_INFO.md</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:44%;">Campo</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>API</td><td>-</td></tr>
+            <tr><td>API link</td><td>-</td></tr>
+            <tr><td>Requer API key</td><td>-</td></tr>
+            <tr><td>Backend</td><td>-</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-card">
+        <div class="table-head">
+          <div><b>🔍 Análise estática do código</b></div>
+          <div class="meta">Gerado automaticamente</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36%;">Indicador</th>
+              <th style="width:8%;">Valor</th>
+              <th style="width:14%;">Estado</th>
+              <th>Observação</th>
+            </tr>
+          </thead>
+          <tbody>
+      <tr>
+        <td>Componentes criados <span style="color:var(--muted);font-size:11px;">(*.component.ts)</span></td>
+        <td class="score">7</td>
+        <td><span class="chip good">✅ OK</span></td>
+        <td style="color:var(--muted);font-size:12px;">7 componentes — boa decomposição da interface</td>
+      </tr>
+      <tr>
+        <td>Serviços criados <span style="color:var(--muted);font-size:11px;">(core/services/*.service.ts)</span></td>
+        <td class="score">3</td>
+        <td><span class="chip good">✅ OK</span></td>
+        <td style="color:var(--muted);font-size:12px;">3 serviços — boa separação de responsabilidades</td>
+      </tr>
+      <tr>
+        <td>Modelos criados <span style="color:var(--muted);font-size:11px;">(core/models/)</span></td>
+        <td class="score">0</td>
+        <td><span class="chip bad">⚠️ Atenção</span></td>
+        <td style="color:var(--muted);font-size:12px;">Nenhum modelo — dados provavelmente sem tipagem (any / object)</td>
+      </tr>
+      <tr>
+        <td>Ficheiros em features/ <span style="color:var(--muted);font-size:11px;">(features/)</span></td>
+        <td class="score">5</td>
+        <td><span class="chip good">✅ OK</span></td>
+        <td style="color:var(--muted);font-size:12px;">5 ficheiros — desenvolvimento incipiente</td>
+      </tr>
+      <tr>
+        <td>Ficheiros em shared/ <span style="color:var(--muted);font-size:11px;">(shared/)</span></td>
+        <td class="score">1</td>
+        <td><span class="chip good">✅ OK</span></td>
+        <td style="color:var(--muted);font-size:12px;">1 ficheiro(s) — partilha de código limitada</td>
+      </tr>
+      <tr>
+        <td>Rotas definidas <span style="color:var(--muted);font-size:11px;">(app.routes.ts)</span></td>
+        <td class="score">7</td>
+        <td><span class="chip good">✅ OK</span></td>
+        <td style="color:var(--muted);font-size:12px;">7 rotas — navegação bem estruturada</td>
+      </tr>
+      <tr>
+        <td>Testes escritos <span style="color:var(--muted);font-size:11px;">(*.spec.ts)</span></td>
+        <td class="score">9</td>
+        <td><span class="chip good">✅ OK</span></td>
+        <td style="color:var(--muted);font-size:12px;">9 ficheiros de teste — boa cobertura</td>
+      </tr>
+      <tr>
+        <td>App component alterado</td>
+        <td class="score">Não</td>
+        <td><span class="chip bad">⚠️ Atenção</span></td>
+        <td style="color:var(--muted);font-size:12px;">Componente principal ainda com o título default do Angular CLI</td>
+      </tr>
+      <tr>
+        <td>PROJECT_INFO.md preenchido</td>
+        <td class="score">Não</td>
+        <td><span class="chip bad">⚠️ Atenção</span></td>
+        <td style="color:var(--muted);font-size:12px;">Campos por preencher: Student 1:, - API name:, - API link:, - Link:</td>
+      </tr></tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        🎓 <b>Technologias Web</b> • 📆 <b>Ano letivo 2025/2026</b>
+      </div>
+    </div>
+  </body>
+</html>

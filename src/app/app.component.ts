@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from './services/auth.service';
+import { AuthService } from './core/services/auth.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
