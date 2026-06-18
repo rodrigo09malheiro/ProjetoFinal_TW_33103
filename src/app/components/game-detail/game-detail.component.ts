@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RawgService } from '../../services/rawg.service';
-import { UserDataService } from '../../services/user-data.service';
+import { UserDataService, Review } from '../../services/user-data.service';
+import { AuthService } from '../../services/auth.service';
 
 interface GameDetail {
   id: number;
@@ -40,6 +41,7 @@ export class GameDetailComponent implements OnInit {
   private router = inject(Router);
   private rawgService = inject(RawgService);
   private userDataService = inject(UserDataService);
+  private authService = inject(AuthService);
 
   game: GameDetail | null = null;
   isLoading = false;
@@ -49,10 +51,16 @@ export class GameDetailComponent implements OnInit {
   reviewComment = '';
   showReviewForm = false;
   successMessage = '';
+  errorMessage = '';
+  gameReviews: Review[] = [];
 
   screenshots: Screenshot[] = [];
   similarGames: SimilarGame[] = [];
   selectedScreenshot: string | null = null;
+
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -61,11 +69,17 @@ export class GameDetailComponent implements OnInit {
       next: (data: unknown) => {
         this.game = data as GameDetail;
         this.isLoading = false;
-        this.checkUserData();
+        if (this.isLoggedIn) {
+          this.checkUserData();
+        }
         this.loadScreenshots(id);
         this.loadSimilarGames(id);
+        this.loadGameReviews(id);
       },
-      error: () => { this.isLoading = false; }
+      error: () => {
+        this.isLoading = false;
+        this.errorMessage = 'Erro ao carregar o jogo. Tenta novamente.';
+      }
     });
   }
 
@@ -87,79 +101,112 @@ export class GameDetailComponent implements OnInit {
     });
   }
 
+  loadGameReviews(id: number): void {
+    this.userDataService.getGameReviews(id).subscribe({
+      next: (reviews) => {
+        this.gameReviews = reviews;
+      },
+      error: () => {
+        // Reviews são opcionais, não mostrar erro crítico
+        this.gameReviews = [];
+      }
+    });
+  }
+
   checkUserData(): void {
     this.userDataService.getFavorites().subscribe({
       next: (favorites) => {
-        // CORREÇÃO: Usar gameId (camelCase)
         this.isFavorite = favorites.some(f => f.gameId === this.game?.id);
       }
     });
     this.userDataService.getWishlist().subscribe({
       next: (wishlist) => {
-        // CORREÇÃO: Usar gameId (camelCase)
         this.isInWishlist = wishlist.some(w => w.gameId === this.game?.id);
       }
     });
   }
 
   toggleFavorite(): void {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
+    }
     if (!this.game) return;
+    this.errorMessage = '';
+
     if (this.isFavorite) {
       this.userDataService.removeFavorite(this.game.id).subscribe({
-        next: () => { this.isFavorite = false; }
+        next: () => { this.isFavorite = false; },
+        error: () => { this.errorMessage = 'Erro ao remover dos favoritos.'; }
       });
     } else {
-      // CORREÇÃO: Enviar propriedades em camelCase!
       this.userDataService.addFavorite({
         gameId: this.game.id,
         gameName: this.game.name,
         gameImage: this.game.background_image,
         gameRating: this.game.rating
       }).subscribe({
-        next: () => { this.isFavorite = true; }
+        next: () => { this.isFavorite = true; },
+        error: () => { this.errorMessage = 'Erro ao adicionar aos favoritos.'; }
       });
     }
   }
 
   toggleWishlist(): void {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
+    }
     if (!this.game) return;
+    this.errorMessage = '';
+
     if (this.isInWishlist) {
       this.userDataService.removeFromWishlist(this.game.id).subscribe({
-        next: () => { this.isInWishlist = false; }
+        next: () => { this.isInWishlist = false; },
+        error: () => { this.errorMessage = 'Erro ao remover da wishlist.'; }
       });
     } else {
-      // CORREÇÃO: Enviar propriedades em camelCase!
       this.userDataService.addToWishlist({
         gameId: this.game.id,
         gameName: this.game.name,
         gameImage: this.game.background_image,
         gameRating: this.game.rating
       }).subscribe({
-        next: () => { this.isInWishlist = true; }
+        next: () => { this.isInWishlist = true; },
+        error: () => { this.errorMessage = 'Erro ao adicionar à wishlist.'; }
       });
     }
   }
 
   submitReview(): void {
-  if (!this.game || !this.reviewRating) return;
-  this.userDataService.addReview({
-    gameId: this.game.id,
-    gameName: this.game.name,
-    rating: this.reviewRating,
-    comment: this.reviewComment
-  }).subscribe({
-    next: () => {
-      this.successMessage = 'Review guardada!';
-      this.showReviewForm = false;
-      this.reviewRating = 0;
-      this.reviewComment = '';
-    },
-    error: (err) => {
-      this.successMessage = '';
-      console.error('Erro ao guardar review:', err);
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
     }
-  });
-}
+    if (!this.game || !this.reviewRating) return;
+    this.errorMessage = '';
+
+    this.userDataService.addReview({
+      gameId: this.game.id,
+      gameName: this.game.name,
+      rating: this.reviewRating,
+      comment: this.reviewComment
+    }).subscribe({
+      next: () => {
+        this.successMessage = 'Review guardada!';
+        this.showReviewForm = false;
+        this.reviewRating = 0;
+        this.reviewComment = '';
+        // Recarrega reviews para mostrar a nova
+        this.loadGameReviews(this.game!.id);
+        // Limpa a mensagem após 3 segundos
+        setTimeout(() => { this.successMessage = ''; }, 3000);
+      },
+      error: () => {
+        this.errorMessage = 'Erro ao guardar a review. Tenta novamente.';
+      }
+    });
+  }
 
   openScreenshot(image: string): void {
     this.selectedScreenshot = image;

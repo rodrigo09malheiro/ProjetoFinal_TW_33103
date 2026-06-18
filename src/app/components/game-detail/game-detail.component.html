@@ -3,6 +3,10 @@
     <div class="loading">A carregar...</div>
   }
 
+  @if (errorMessage && !game) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  }
+
   @if (game) {
     <!-- HERO com imagem + degradê -->
     <div class="hero" [style.background-image]="'url(' + game.background_image + ')'">
@@ -45,6 +49,9 @@
 
             @if (successMessage) {
               <div class="success">{{ successMessage }}</div>
+            }
+            @if (errorMessage) {
+              <div class="error">{{ errorMessage }}</div>
             }
           </div>
         </div>
@@ -91,6 +98,28 @@
         </div>
       </div>
 
+      <!-- SECÇÃO DE REVIEWS -->
+      @if (gameReviews.length > 0) {
+        <div class="section">
+          <h2>Reviews ({{ gameReviews.length }})</h2>
+          <div class="reviews-list">
+            @for (review of gameReviews; track review.gameId) {
+              <div class="review-card">
+                <div class="review-header">
+                  <span class="review-user">{{ review.username ?? 'Utilizador' }}</span>
+                  <span class="review-stars">
+                    @for (star of [1,2,3,4,5]; track star) {
+                      <span [class.filled]="star <= review.rating">★</span>
+                    }
+                  </span>
+                </div>
+                <p class="review-comment">{{ review.comment }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
       @if (screenshots.length > 0) {
         <div class="section">
           <h2>Screenshots</h2>
@@ -127,7 +156,7 @@
                   <p>{{ similar.name }}</p>
                   <span>⭐ {{ similar.rating }}</span>
                 </div>
-              </div>
+            </div>
             }
           </div>
         </div>
