@@ -1,3 +1,12 @@
+/**
+ * features/login/login.component.ts
+ * --------------------------------------------------------------------------
+ * Componente da página de login. Apresenta o formulário de email/password,
+ * valida os campos antes de submeter, chama o AuthService para autenticar
+ * o utilizador e, em caso de sucesso, redireciona para a listagem de
+ * jogos. Em caso de erro, mostra a mensagem devolvida pelo backend.
+ * --------------------------------------------------------------------------
+ */
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +29,7 @@ export class LoginComponent {
   errorMessage = '';
   isLoading = false;
 
+  // Valida os campos, chama o AuthService.login e trata sucesso/erro
   onLogin(): void {
     if (!this.email || !this.password) {
       this.errorMessage = 'Preenche todos os campos.';
@@ -40,6 +50,7 @@ export class LoginComponent {
     });
   }
 
+  // Navega para a página de registo
   goToRegister(): void {
     this.router.navigate(['/register']);
   }

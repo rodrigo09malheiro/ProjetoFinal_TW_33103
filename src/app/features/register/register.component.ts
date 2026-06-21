@@ -1,3 +1,12 @@
+/**
+ * features/register/register.component.ts
+ * --------------------------------------------------------------------------
+ * Componente da página de registo. Apresenta o formulário de criação de
+ * conta (username, email, password, confirmação), valida os campos
+ * (incluindo confirmação de password) e, após registo bem-sucedido,
+ * redireciona para a página de login.
+ * --------------------------------------------------------------------------
+ */
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +31,7 @@ export class RegisterComponent {
   errorMessage = '';
   isLoading = false;
 
+  // Valida os campos (incluindo password === confirmPassword) e regista o utilizador
   onRegister(): void {
     if (!this.username || !this.email || !this.password || !this.confirmPassword) {
       this.errorMessage = 'Preenche todos os campos.';
@@ -46,6 +56,7 @@ export class RegisterComponent {
     });
   }
 
+  // Navega para a página de login
   goToLogin(): void {
     this.router.navigate(['/login']);
   }

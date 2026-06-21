@@ -1,3 +1,14 @@
+/**
+ * features/game-detail/game-detail.component.ts
+ * --------------------------------------------------------------------------
+ * Componente da página de detalhe de um jogo. Carrega os dados completos
+ * do jogo (RAWG), as suas screenshots e jogos semelhantes, e — se o
+ * utilizador estiver autenticado — verifica se o jogo já está nos seus
+ * favoritos/wishlist. Permite também adicionar/remover favoritos e
+ * wishlist, submeter uma review (nota + comentário) e ver as reviews já
+ * existentes desse jogo.
+ * --------------------------------------------------------------------------
+ */
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -57,10 +68,12 @@ export class GameDetailComponent implements OnInit {
   similarGames: SimilarGame[] = [];
   selectedScreenshot: string | null = null;
 
+  // Atalho usado no template para mostrar/escolher ações que exigem sessão iniciada
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
 
+  // Lê o id do jogo a partir do URL e carrega todos os dados necessários à página
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.isLoading = true;
@@ -82,6 +95,7 @@ export class GameDetailComponent implements OnInit {
     });
   }
 
+  // Carrega as screenshots do jogo, limitando a 6 para a galeria
   loadScreenshots(id: number): void {
     this.rawgService.getGameScreenshots(id).subscribe({
       next: (data: unknown) => {
@@ -91,6 +105,7 @@ export class GameDetailComponent implements OnInit {
     });
   }
 
+  // Carrega jogos semelhantes (mesma série), limitando a 6 para a secção
   loadSimilarGames(id: number): void {
     this.rawgService.getSimilarGames(id).subscribe({
       next: (data: unknown) => {
@@ -100,6 +115,7 @@ export class GameDetailComponent implements OnInit {
     });
   }
 
+  // Carrega as reviews já existentes para este jogo (sem bloquear a página em caso de erro)
   loadGameReviews(id: number): void {
     this.userDataService.getGameReviews(id).subscribe({
       next: (reviews) => {
@@ -112,6 +128,7 @@ export class GameDetailComponent implements OnInit {
     });
   }
 
+  // Verifica se o jogo atual já está nos favoritos/wishlist do utilizador logado
   checkUserData(): void {
     this.userDataService.getFavorites().subscribe({
       next: (favorites) => {
@@ -125,6 +142,7 @@ export class GameDetailComponent implements OnInit {
     });
   }
 
+  // Adiciona ou remove o jogo dos favoritos, dependendo do estado atual
   toggleFavorite(): void {
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
@@ -151,6 +169,7 @@ export class GameDetailComponent implements OnInit {
     }
   }
 
+  // Adiciona ou remove o jogo da wishlist, dependendo do estado atual
   toggleWishlist(): void {
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
@@ -177,6 +196,7 @@ export class GameDetailComponent implements OnInit {
     }
   }
 
+  // Submete uma nova review (nota + comentário) para o jogo atual
   submitReview(): void {
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
@@ -207,18 +227,22 @@ export class GameDetailComponent implements OnInit {
     });
   }
 
+  // Abre o modal com a screenshot ampliada
   openScreenshot(image: string): void {
     this.selectedScreenshot = image;
   }
 
+  // Fecha o modal de screenshot ampliada
   closeScreenshot(): void {
     this.selectedScreenshot = null;
   }
 
+  // Navega para o detalhe de um jogo semelhante, ao clicar no respetivo card
   goToGame(id: number): void {
     this.router.navigate(['/games', id]);
   }
 
+  // Volta para a listagem de jogos
   goBack(): void {
     this.router.navigate(['/games']);
   }
