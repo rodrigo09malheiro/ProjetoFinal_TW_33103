@@ -17,14 +17,14 @@ const htmlOutputPath =
     : path.join(projectRoot, "grade-report.html");
 
 const requiredPaths = [
-  "src",
-  "src/server.js",
-  "src/app.js",
-  "src/config",
-  "src/config/swagger.js",
-  "src/routes",
-  "src/controllers",
-  "src/models",
+  "src/app",
+  "src/app/core",
+  "src/app/core/services",
+  "src/app/core/models",
+  "src/app/features",
+  "src/app/shared",
+  "src/app/app.routes.ts",
+  "src/app/app.config.ts",
   "README.md",
   "PROJECT_INFO.md",
 ];
@@ -53,17 +53,29 @@ if (!isGradeMode) {
 // ── Weights ────────────────────────────────────────────────────────────────────
 
 const MAX_SCORE = 20;
-const weights = { structure: 10, lint: 5, syntax: 5 };
+const weights = { structure: 10, lint: 5, build: 5 };
 
 // ── Static analysis ────────────────────────────────────────────────────────────
 
-const walkJs = (dir) => {
+const walkTs = (dir) => {
   if (!fs.existsSync(dir)) return [];
   const results = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) results.push(...walkJs(full));
-    else if (entry.name.endsWith(".js")) results.push(full);
+    if (entry.isDirectory()) results.push(...walkTs(full));
+    else if (entry.name.endsWith(".ts") && !entry.name.endsWith(".spec.ts"))
+      results.push(full);
+  }
+  return results;
+};
+
+const walkSpec = (dir) => {
+  if (!fs.existsSync(dir)) return [];
+  const results = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) results.push(...walkSpec(full));
+    else if (entry.name.endsWith(".spec.ts")) results.push(full);
   }
   return results;
 };
@@ -77,36 +89,23 @@ const readSafe = (filePath) => {
 };
 
 const analyseProject = () => {
-  const srcDir = path.join(projectRoot, "src");
-  const routesDir = path.join(srcDir, "routes");
-  const controllersDir = path.join(srcDir, "controllers");
-  const modelsDir = path.join(srcDir, "models");
-  const configDir = path.join(srcDir, "config");
-
-  const routeFiles = walkJs(routesDir).filter(
-    (f) => path.basename(f) !== "index.js",
-  );
-  const controllerFiles = walkJs(controllersDir);
-  const modelFiles = walkJs(modelsDir);
-
-  const allRouteContent = walkJs(routesDir)
-    .map((f) => readSafe(f))
-    .join("\n");
-
-  const hasGet = /router\.get\s*\(/.test(allRouteContent);
-  const hasPost = /router\.post\s*\(/.test(allRouteContent);
-  const hasPut = /router\.(put|patch)\s*\(/.test(allRouteContent);
-  const hasDelete = /router\.delete\s*\(/.test(allRouteContent);
-  const crudVerbs = [hasGet, hasPost, hasPut, hasDelete].filter(Boolean).length;
-
-  const swaggerConfigPath = path.join(configDir, "swagger.js");
-  const swaggerContent = readSafe(swaggerConfigPath);
-  const hasSwagger =
-    fs.existsSync(swaggerConfigPath) && swaggerContent.length > 100;
-
-  const hasEnvExample = fs.existsSync(path.join(projectRoot, ".env.example"));
-
+  const appDir = path.join(projectRoot, "src/app");
+  const servicesDir = path.join(appDir, "core/services");
+  const modelsDir = path.join(appDir, "core/models");
+  const featuresDir = path.join(appDir, "features");
+  const sharedDir = path.join(appDir, "shared");
+  const routesPath = path.join(appDir, "app.routes.ts");
   const infoPath = path.join(projectRoot, "PROJECT_INFO.md");
+
+  const components = walkTs(appDir).filter((f) =>
+    path.basename(f).endsWith(".component.ts"),
+  );
+  const services = walkTs(servicesDir).filter((f) =>
+    path.basename(f).endsWith(".service.ts"),
+  );
+  const routesContent = readSafe(routesPath);
+  const routeMatches = routesContent.match(/path\s*:/g) || [];
+
   const infoContent = readSafe(infoPath);
   const defaultFields = [
     "Student 1:",
@@ -117,25 +116,22 @@ const analyseProject = () => {
   ];
   const unfilledFields = defaultFields.filter((f) => infoContent.includes(f));
 
-  const appContent = readSafe(path.join(srcDir, "app.js"));
-  const isDefaultApp = appContent.includes(
-    "webtech-final-project-backend-template",
-  );
+  const appContent = readSafe(path.join(appDir, "app.component.ts"));
 
   return {
-    routeFiles: routeFiles.length,
-    controllers: controllerFiles.length,
-    models: modelFiles.length,
-    crudVerbs,
-    hasGet,
-    hasPost,
-    hasPut,
-    hasDelete,
-    hasSwagger,
-    hasEnvExample,
+    components: components.length,
+    services: services.length,
+    models: walkTs(modelsDir).length,
+    featureFiles: walkTs(featuresDir).length,
+    sharedFiles: walkTs(sharedDir).length,
+    specFiles: walkSpec(appDir).length,
+    hasRealRoutes: routeMatches.length > 1,
+    routeCount: routeMatches.length,
     infoFilled: unfilledFields.length === 0,
     unfilledFields,
-    isDefaultApp,
+    isDefaultApp:
+      appContent.includes("title = 'webtech") ||
+      appContent.includes('title = "webtech'),
   };
 };
 
@@ -166,14 +162,14 @@ const parseProjectInfo = () => {
       apiName: "",
       apiLink: "",
       apiKey: "",
-      frontendLink: "",
+      backendLink: "",
     };
 
   const content = fs.readFileSync(infoPath, "utf8");
   const groupText = extractSection(content, "Group Members");
   const themeText = extractSection(content, "Project Theme");
   const apiText = extractSection(content, "External API Used");
-  const frontendText = extractSection(content, "Frontend Repository");
+  const backendText = extractSection(content, "Backend Repository");
 
   const groupMembers = groupText
     .split("\n")
@@ -194,8 +190,8 @@ const parseProjectInfo = () => {
     apiText
       .split("\n")
       .find((l) => l.toLowerCase().startsWith("- requires api key")) || "";
-  const frontendLink =
-    frontendText
+  const backendLink =
+    backendText
       .split("\n")
       .find((l) => l.toLowerCase().startsWith("- link:")) || "";
 
@@ -205,7 +201,7 @@ const parseProjectInfo = () => {
     apiName: apiName.replace(/^[-\s]*api name:\s*/i, "").trim(),
     apiLink: apiLink.replace(/^[-\s]*api link:\s*/i, "").trim(),
     apiKey: apiKey.replace(/^[-\s]*requires api key\??\s*/i, "").trim(),
-    frontendLink: frontendLink.replace(/^[-\s]*link:\s*/i, "").trim(),
+    backendLink: backendLink.replace(/^[-\s]*link:\s*/i, "").trim(),
   };
 };
 
@@ -214,6 +210,7 @@ const runNpmScript = (scriptName) => {
   const result = spawnSync(npm, ["run", scriptName], {
     cwd: projectRoot,
     encoding: "utf8",
+    shell: process.platform === "win32",
   });
   return {
     status: result.status === 0 ? "pass" : "fail",
@@ -243,12 +240,7 @@ const report = {
       missing: missingPaths,
     },
     lint: { status: "skipped", score: 0, maxScore: weights.lint, output: "" },
-    syntax: {
-      status: "skipped",
-      score: 0,
-      maxScore: weights.syntax,
-      output: "",
-    },
+    build: { status: "skipped", score: 0, maxScore: weights.build, output: "" },
   },
 };
 
@@ -260,18 +252,18 @@ if (structureStatus === "pass") {
     maxScore: weights.lint,
   };
 
-  const syntaxResult = runNpmScript("syntax");
-  report.checks.syntax = {
-    ...syntaxResult,
-    score: syntaxResult.status === "pass" ? weights.syntax : 0,
-    maxScore: weights.syntax,
+  const buildResult = runNpmScript("build");
+  report.checks.build = {
+    ...buildResult,
+    score: buildResult.status === "pass" ? weights.build : 0,
+    maxScore: weights.build,
   };
 }
 
 const totalScore =
   report.checks.structure.score +
   report.checks.lint.score +
-  report.checks.syntax.score;
+  report.checks.build.score;
 
 report.score = Number(totalScore.toFixed(2));
 report.percentage = Number(((report.score / MAX_SCORE) * 100).toFixed(2));
@@ -296,8 +288,9 @@ console.log(
   `Lint      : ${report.checks.lint.score}/${weights.lint} (${report.checks.lint.status})`,
 );
 console.log(
-  `Syntax    : ${report.checks.syntax.score}/${weights.syntax} (${report.checks.syntax.status})`,
+  `Build     : ${report.checks.build.score}/${weights.build} (${report.checks.build.status})`,
 );
 console.log(`\nHTML report: ${htmlOutputPath}`);
 
 process.exit(0);
+teste
